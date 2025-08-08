@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olexi AI - Australian Legal Research Platform</title>YPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olexi AI - AustLII Legal Research Server</title>
+    
+    <!-- Favicon Meta Tags -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/static/android-chrome-512x512.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#8B5CF6">
+    <meta name="description" content="Olexi AI - Intelligent Legal Research powered by AustLII">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        h1 {
+            margin: 0 0 1rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            border-radius: 10px;
+            color: #10B981;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .api-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: left;
+            margin-top: 2rem;
+        }
+        .api-info h3 {
+            margin-top: 0;
+            color: #F59E0B;
+        }
+        .endpoint {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 0.5rem 0;
+        }
+        .docs-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .docs-link:hover {
+            background: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Olexi</div>
+        <h1>Olexi AI Server</h1>
+        <p class="subtitle">Intelligent Legal Research powered by AustLII</p>
+        
+        <div class="status">🟢 Server Running</div>
+        
+        <div class="api-info">
+            <h3>API Information</h3>
+            <p><strong>Main Endpoint:</strong></p>
+            <div class="endpoint">POST /api/olexi-chat</div>
+            
+            <p><strong>Health Check:</strong></p>
+            <div class="endpoint">GET /</div>
+            
+            <p><strong>Coverage:</strong> 65+ Australian Legal Databases</p>
+            <p><strong>AI Model:</strong> Google Gemini 2.5 Flash</p>
+            <p><strong>Port:</strong> 3000</p>
+            
+            <a href="/docs" class="docs-link">📚 View API Documentation</a>
+        </div>
+    </div>
+</body>
+</html>

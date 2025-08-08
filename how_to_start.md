@@ -1,8 +1,21 @@
 How to start: 
 1. git clone.
-2. Install and ictivate enviroment venv/conda.
+2. Install and activate environment venv/conda.
 3. `pip install -r requirements.txt`.
-4. `uvicorn main:app --reload --port 3000`.
+4. Create favicon image files (see FAVICON_SETUP.md for instructions).
+5. `uvicorn main:app --reload --port 3000`.
+
+Server will be available at:
+- **Landing Page:** http://127.0.0.1:3000 (Olexi branded homepage)
+- **API Documentation:** http://127.0.0.1:3000/docs (Interactive FastAPI docs)
+- **Health Check:** http://127.0.0.1:3000/health (Server status)
+
+Features Available:
+- ✅ Professional Olexi branding with favicon support
+- ✅ Comprehensive Australian legal database coverage (65+ databases)
+- ✅ AI-powered legal research via /api/olexi-chat endpoint
+- ✅ Progressive Web App manifest for mobile experience
+- ✅ Static file serving for assets and documentation
 
 How to run API test:
 1.  **Start the Server:**

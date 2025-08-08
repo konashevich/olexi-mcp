@@ -108,6 +108,9 @@ v (API Call using MCP Schema)                                     v (GET Request
 **Server Configuration:**
 - **Port:** 3000 (updated from default 8000)
 - **CORS:** Configured for cross-origin browser extension access
+- **Static Files:** FastAPI StaticFiles mount for serving favicon and branding assets
+- **Branding:** Olexi logo integration with purple theme (#8B5CF6) and professional landing page
+- **PWA Support:** Web app manifest for mobile-friendly Progressive Web App experience
 - **API Endpoint:** `/api/olexi-chat` with Pydantic request/response models
 
 **Data Processing Pipeline:**
@@ -123,23 +126,24 @@ The project is currently at the **Production-Ready Backend** stage with **Full E
 
 ### 5.1. Completed Milestones ✅
 
-*   **FastAPI Server Foundation:** ✅ **COMPLETE** - Working server with `/api/olexi-chat` endpoint, proper CORS configuration, and health check endpoint. Server configured to run on port 3000.
-*   **Web Scraper Module:** ✅ **COMPLETE** - The `austlii_scraper.py` module successfully queries the AustLII `cgi-bin/sinosrch.cgi` endpoint with proper browser headers and parses HTML using the validated two-stage strategy (`div.card > li.multi`).
-*   **MCP Handler Module:** ✅ **COMPLETE** - The `mcp_handler.py` module implements both "Strategist" and "Synthesizer" calls using Google's Gemini 2.5 Flash model via the `google-genai` SDK with structured JSON communication.
-*   **Comprehensive Database Map:** ✅ **COMPLETE** - The `database_map.py` contains 65+ databases covering the entire Australian legal system:
-    - All federal courts (High Court, Federal Court, Family Court, AAT, Fair Work Commission)
-    - All state Supreme Courts and Courts of Appeal
-    - Specialized courts (Land & Environment, Planning, Civil & Administrative Tribunals)
-    - Federal and state legislation databases
-    - Broad search categories for comprehensive coverage
-*   **End-to-End Integration:** ✅ **COMPLETE** - All backend modules are integrated and tested. The server successfully:
-    - Receives natural language prompts
-    - Generates intelligent search strategies using AI
-    - Executes searches against live AustLII data
-    - Produces comprehensive summaries with proper legal citations
-    - Returns both AI analysis and direct links to full results
-*   **Error Handling & Debugging:** ✅ **COMPLETE** - Robust error handling implemented with fallback strategies, comprehensive logging, and debug output to `debug_austlii_page.html` for troubleshooting.
-*   **Data Model Architecture:** ✅ **COMPLETE** - Pydantic models for type safety with proper JSON serialization handling for AI processing.
+*   **FastAPI Server Foundation:** ✅ **COMPLETE** - Working server with `/api/olexi-chat` endpoint, proper CORS configuration, health check endpoint, and branded landing page. Server configured to run on port 3000 with static file serving and favicon support.
+*   **Web Scraper Module:** ✅ **COMPLETE** - The `austlii_scraper.py` module successfully queries the AustLII `cgi-bin/sinosrch.cgi` endpoint with proper browser headers (`User-Agent` and `Referer`) and parses HTML using the validated two-stage strategy (`div.card > li.multi` targeting).
+*   **MCP Handler Module:** ✅ **COMPLETE** - The `mcp_handler.py` module implements both "Strategist" and "Synthesizer" calls using Google's Gemini 2.5 Flash model via the `google-genai` SDK with structured JSON communication following Model Context Protocol standards.
+*   **Comprehensive Database Map:** ✅ **COMPLETE** - The `database_map.py` contains **65+ databases** covering the entire Australian legal system:
+    - **Federal Courts:** High Court, Federal Court (+ Full Court), Family Court, AAT, Fair Work Commission, Native Title Tribunal
+    - **All State Supreme Courts & Appeals:** NSW, VIC, QLD, WA, SA, TAS, NT, ACT Supreme Courts and Courts of Appeal  
+    - **Specialized Courts:** Land & Environment Courts, Planning Courts, Civil & Administrative Tribunals (VCAT, NCAT, QCAT, SACAT, etc.)
+    - **Federal & State Legislation:** Consolidated Acts and Regulations for all jurisdictions
+    - **Broad Search Categories:** "All Commonwealth Cases", "All [State] Cases" for comprehensive coverage
+*   **End-to-End Integration:** ✅ **COMPLETE** - All backend modules are integrated and tested. The server successfully executes the complete five-phase workflow:
+    1. **Capture:** Receives natural language prompts via POST `/api/olexi-chat`
+    2. **Strategize:** AI selects relevant databases from 65+ options using MCP protocol
+    3. **Execute:** Builds correct AustLII URLs with proper encoding and scrapes results
+    4. **Synthesize:** AI generates human-readable summaries with embedded citations
+    5. **Deliver:** Returns both AI analysis and direct links to full results
+*   **Error Handling & Debugging:** ✅ **COMPLETE** - Robust error handling implemented with fallback strategies, comprehensive logging, and debug output to `debug_austlii_page.html` for troubleshooting AustLII responses.
+*   **Data Model Architecture:** ✅ **COMPLETE** - Pydantic models ensure type safety with proper JSON serialization handling for AI processing, including URL type conversion for LLM compatibility.
+*   **User Interface & Branding:** ✅ **COMPLETE** - Professional landing page with Olexi branding, favicon support, Progressive Web App manifest, and comprehensive API documentation via FastAPI's automatic OpenAPI integration.
 
 ### 5.2. Validated Functionality ✅
 
@@ -163,8 +167,15 @@ The project is currently at the **Production-Ready Backend** stage with **Full E
 - **Dependencies:** All libraries locked in `requirements.txt`
 
 **API Endpoints:**
-- `GET /` - Health check (returns server status)
+- `GET /` - Landing page with Olexi branding and API documentation
+- `GET /health` - Health check endpoint (returns server status)
 - `POST /api/olexi-chat` - Main chat interface (accepts `ChatRequest`, returns `ChatResponse`)
+- `GET /favicon.ico` - Primary favicon endpoint
+- `GET /favicon-16x16.png` - 16x16 favicon for various browsers
+- `GET /favicon-32x32.png` - 32x32 favicon for standard display
+- `GET /apple-touch-icon.png` - Apple device icon
+- `GET /site.webmanifest` - Progressive Web App manifest
+- `GET /static/...` - Static file serving for assets and branding
 - Interactive API documentation available at `/docs`
 
 ### 5.4. Next Steps & Roadmap 🚧
