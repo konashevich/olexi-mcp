@@ -129,4 +129,4 @@ P.S. How to start:
 1. git clone.
 2. Install and ictivate enviroment venv/conda.
 3. `pip install -r requirements.txt`.
-4. `uvicorn main:app --reload`.
+4. `uvicorn main:app --reload --port 3000`.
