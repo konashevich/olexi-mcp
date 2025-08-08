@@ -36,8 +36,10 @@ def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
         print(f"Error fetching data from AustLII: {e}")
         return []
 
-    with open("debug_austlii_page.html", "w", encoding="utf-8") as f:
-        f.write(response.text)
+    # Debug output disabled
+    # To re-enable debug output, uncomment the following lines:
+    # with open("debug_austlii_page.html", "w", encoding="utf-8") as f:
+    #     f.write(response.text)
 
     soup = BeautifulSoup(response.text, 'html.parser')
     results: List[SearchResultItem] = []

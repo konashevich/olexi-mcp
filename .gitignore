@@ -66,5 +66,8 @@ htmlcov/
 # Log files
 *.log
 
+# Debug files
+debug_austlii_page.html
+
 # Old directories
 old/

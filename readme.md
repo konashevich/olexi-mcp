@@ -141,7 +141,7 @@ The project is currently at the **Production-Ready Backend** stage with **Full E
     3. **Execute:** Builds correct AustLII URLs with proper encoding and scrapes results
     4. **Synthesize:** AI generates human-readable summaries with embedded citations
     5. **Deliver:** Returns both AI analysis and direct links to full results
-*   **Error Handling & Debugging:** ✅ **COMPLETE** - Robust error handling implemented with fallback strategies, comprehensive logging, and debug output to `debug_austlii_page.html` for troubleshooting AustLII responses.
+*   **Error Handling & Debugging:** ✅ **COMPLETE** - Robust error handling implemented with fallback strategies and comprehensive logging. Debug output can be enabled in `austlii_scraper.py` if needed for troubleshooting.
 *   **Data Model Architecture:** ✅ **COMPLETE** - Pydantic models ensure type safety with proper JSON serialization handling for AI processing, including URL type conversion for LLM compatibility.
 *   **User Interface & Branding:** ✅ **COMPLETE** - Professional landing page with Olexi branding, favicon support, Progressive Web App manifest, and comprehensive API documentation via FastAPI's automatic OpenAPI integration.
 
