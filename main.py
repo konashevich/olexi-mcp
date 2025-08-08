@@ -54,7 +54,14 @@ async def handle_chat_request(request: ChatRequest):
     scraped_results = search_austlii(query_to_search, databases_to_search)
 
     # Convert Pydantic models to simple dicts for the AI to process
-    scraped_results_dicts = [item.model_dump() for item in scraped_results]
+    # Manually convert to ensure all URLs are strings
+    scraped_results_dicts = []
+    for item in scraped_results:
+        scraped_results_dicts.append({
+            "title": item.title,
+            "url": str(item.url),  # Force conversion to string
+            "metadata": item.metadata
+        })
 
     # --- Phase 4: Synthesize & Formulate (MCP Call #2) ---
     try:
