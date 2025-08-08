@@ -1,25 +1,55 @@
-# Olexi AI: Project Documentation
+# Olexi AI: Project Documentation (Definitive Edition)
 
-**Version:** 1.0
+**Version:** 2.0
 **Date:** July 27, 2025
 
 ## 1. Project Goal
 
-The primary goal of the Olexi AI project is to significantly lower the barrier to entry for legal research on the AustLII database. By creating an intelligent conversational interface, we aim to empower students, legal professionals, and the general public to find and understand complex legal information using simple, natural language, thereby democratizing access to Australasian law.
+The primary goal of the Olexi AI project is to significantly lower the barrier to entry for legal research on the AustLII database. By creating an intelligent conversational interface, we aim to empower users to find and understand complex legal information using simple, natural language.
 
 ## 2. Core Concept
 
-Olexi AI is a browser extension that integrates seamlessly with the AustLII website. It provides a chat-based interface that acts as an expert research assistant.
+Olexi AI is a browser extension that integrates seamlessly with the AustLII website, providing a chat-based interface that acts as an expert research assistant. It interprets natural language queries, formulates and executes precise searches against the AustLII engine, and returns a synthesized, human-readable summary with direct citations and a link to the full search results.
 
-Users can interact with Olexi AI in the following ways:
+## 3. The AustLII Technology Environment: An Experimental Deep Dive
 
-1.  **Natural Language Search:** A user can type a complex query in plain English (e.g., *"What are the key High Court cases related to the duty of care for public authorities?"*). Olexi AI will interpret this request, formulate a precise search query, and execute it.
-2.  **AI-Powered Summarization:** Instead of just a list of links, Olexi AI returns a synthesized, human-readable summary of the most relevant findings, explaining the key points of legislation or the significance of case law.
-3.  **Direct Citations & Full Results:** Every piece of information in the AI's summary is backed by direct, clickable links to the source documents on AustLII. Additionally, a link to the complete, raw search results page is provided, allowing for verification and deeper research.
+Initial development has revealed that AustLII's search functionality is non-trivial to interact with programmatically. The system is a legacy CGI application with undocumented security measures. Our success is contingent on understanding and correctly mimicking the behavior of a real browser interacting with its web forms. The following findings were retrieved experimentally and are critical to the project's function.
 
-## 3. The AustLII Technology Environment
+### 3.1. The Endpoint: The `cgi-bin` Ground Truth
+
+*   **Finding:** Despite the presence of modern-looking URLs like `/search/` on the site, extensive testing confirmed that this endpoint is a deliberate dead end for our purposes, returning a `410 Gone` HTTP status.
+*   **Decision:** The one true, functional endpoint for all search queries is the legacy CGI script:
+    `https://www.austlii.edu.au/cgi-bin/sinosrch.cgi`
+*   **Rationale:** All successful manual search submissions from the site's own forms ultimately resolve to this endpoint. It is the only reliable entry point for programmatic searching.
+
+### 3.2. Request Method & Security: Simulating a Real Browser
+
+*   **Finding:** A simple `GET` request to a fully-formed `cgi-bin` URL fails when accessed directly (e.g., pasting into a browser or using a basic script). However, network inspection of a successful manual search confirmed the request method is indeed `GET`.
+*   **The Tricky Issue:** This paradox is resolved by the server's use of HTTP header validation to block non-browser requests. The server expects requests to "prove" they originated from a legitimate user interaction on the website.
+*   **Decision:** All `GET` requests sent by our scraper **must** include specific HTTP headers to mimic a real browser.
+*   **Rationale:** Experimental testing identified two critical headers:
+    1.  `User-Agent`: Identifies our script as a standard web browser, preventing it from being blocked as a bot.
+    2.  `Referer`: Tells the server that the request is "coming from" the official search form page. This is a common, simple security measure to prevent direct linking and scraping.
+    By including these headers, our script's requests become indistinguishable from a real user's, ensuring they are accepted and processed.
+
+### 3.3. URL Parameter Encoding: The "Repeating Key" Logic
+
+*   **Finding:** When filtering by multiple databases, the AustLII server does not accept a comma-separated list.
+*   **The Tricky Issue:** The server expects the parameter key for the database filter (`mask_path`) to be repeated for each value.
+*   **Decision:** Our Python code must construct the URL parameters as a *list of tuples* rather than a standard dictionary.
+*   **Rationale:** This specific data structure forces the `requests` library to generate the correct URL format (e.g., `...?mask_path=A&mask_path=B`), satisfying the server's requirement. An incorrect format would lead to a logical error where the server returns "0 documents found" because the query is impossible to fulfill.
+
+### 3.4. HTML Structure & Parsing Strategy: A Non-Semantic Environment
+
+*   **Finding:** The HTML of the search results page is not structured semantically. The desired content (the actual results) is mixed in with other UI elements like sorting tabs and navigation links.
+*   **The Tricky Issue:** A naive parser that simply looks for the first list on the page (`<ul>`) will incorrectly scrape the sorting tabs ("By Relevance", "By Database", etc.) instead of the actual legal documents.
+*   **Decision:** The scraper employs a two-step parsing strategy.
+*   **Rationale:** To ensure accuracy, the parser must first isolate the unique parent container that holds *only* the search results. Through inspection of the `debug_austlii_page.html` file, this was identified as `<div class="card">`. Only after isolating this container does the parser then search for the individual result items, which are identified as `<li class="multi">`. This precision prevents the scraper from capturing irrelevant UI elements.
+
+## 4. System Design and Architecture
 
 Our initial research and testing have confirmed that AustLII does **not** provide a formal, documented public API for developers. Instead, the project's success relies on programmatically interacting with its user-facing search engine.
+The project uses a decoupled architecture with a Python/FastAPI backend and a vanilla JavaScript browser extension. The backend acts as the central orchestrator, implementing the Model Context Protocol (MCP) for reliable communication with the LLM and housing the specialized scraper module designed to handle the intricacies of the AustLII environment.
 
 *   **De Facto API:** The "API" is the website's URL-driven search functionality. All searches are executed via `GET` requests to a specific endpoint with parameters encoded in the URL.
 *   **The Live Endpoint:** All development must target the modern, reliable search endpoint:
