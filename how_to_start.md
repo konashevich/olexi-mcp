@@ -2,8 +2,7 @@ How to start:
 1. git clone.
 2. Install and activate environment venv/conda.
 3. `pip install -r requirements.txt`.
-4. Create favicon image files (see FAVICON_SETUP.md for instructions).
-5. `uvicorn main:app --reload --port 3000`.
+4. `uvicorn main:app --reload --port 3000`.
 
 Server will be available at:
 - **Landing Page:** http://127.0.0.1:3000 (Olexi branded homepage)
