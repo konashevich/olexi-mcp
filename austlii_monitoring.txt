@@ -538,3 +538,225 @@
 {"ts": "2025-08-11T11:39:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 111, "source": "poll", "interval_s": 60}
 {"ts": "2025-08-11T11:40:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
 {"ts": "2025-08-11T11:41:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 139, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:42:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 117, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:44:00Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3022, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:45:12Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9ab7d0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3012, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:46:15Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3021, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:47:18Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9fc3b0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3011, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:48:21Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3022, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:49:24Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3022, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:50:27Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3025, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:51:30Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9fda30>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3012, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:52:33Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9fe330>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3017, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:53:37Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 4037, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:54:37Z", "ok": true, "status": 200, "error": "", "latency_ms": 120, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:55:37Z", "ok": true, "status": 200, "error": "", "latency_ms": 108, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:56:37Z", "ok": true, "status": 200, "error": "", "latency_ms": 138, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:57:38Z", "ok": true, "status": 200, "error": "", "latency_ms": 119, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:58:38Z", "ok": true, "status": 200, "error": "", "latency_ms": 138, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:59:38Z", "ok": true, "status": 200, "error": "", "latency_ms": 136, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:00:38Z", "ok": true, "status": 200, "error": "", "latency_ms": 113, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:01:38Z", "ok": true, "status": 200, "error": "", "latency_ms": 109, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:02:38Z", "ok": true, "status": 200, "error": "", "latency_ms": 114, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:03:38Z", "ok": true, "status": 200, "error": "", "latency_ms": 168, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:04:38Z", "ok": true, "status": 200, "error": "", "latency_ms": 146, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:05:39Z", "ok": true, "status": 200, "error": "", "latency_ms": 143, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:06:39Z", "ok": true, "status": 200, "error": "", "latency_ms": 142, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:07:39Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:08:39Z", "ok": true, "status": 200, "error": "", "latency_ms": 139, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:09:39Z", "ok": true, "status": 200, "error": "", "latency_ms": 110, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:10:39Z", "ok": true, "status": 200, "error": "", "latency_ms": 143, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:11:39Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:12:40Z", "ok": true, "status": 200, "error": "", "latency_ms": 135, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:13:40Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:14:40Z", "ok": true, "status": 200, "error": "", "latency_ms": 134, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:15:40Z", "ok": true, "status": 200, "error": "", "latency_ms": 139, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:16:40Z", "ok": true, "status": 200, "error": "", "latency_ms": 159, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:17:40Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:18:40Z", "ok": true, "status": 200, "error": "", "latency_ms": 104, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:19:40Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:20:41Z", "ok": true, "status": 200, "error": "", "latency_ms": 129, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:21:41Z", "ok": true, "status": 200, "error": "", "latency_ms": 118, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:22:41Z", "ok": true, "status": 200, "error": "", "latency_ms": 113, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:23:41Z", "ok": true, "status": 200, "error": "", "latency_ms": 121, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:24:41Z", "ok": true, "status": 200, "error": "", "latency_ms": 131, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:25:41Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:26:41Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:27:41Z", "ok": true, "status": 200, "error": "", "latency_ms": 141, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:28:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 131, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:29:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 121, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:30:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 136, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:31:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 148, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:32:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 117, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:33:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 118, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:34:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 119, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:35:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:36:43Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:37:43Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:38:43Z", "ok": true, "status": 200, "error": "", "latency_ms": 127, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:39:43Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:40:43Z", "ok": true, "status": 200, "error": "", "latency_ms": 128, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:41:43Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:42:43Z", "ok": true, "status": 200, "error": "", "latency_ms": 131, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:43:44Z", "ok": true, "status": 200, "error": "", "latency_ms": 126, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:44:44Z", "ok": true, "status": 200, "error": "", "latency_ms": 124, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:45:44Z", "ok": true, "status": 200, "error": "", "latency_ms": 133, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:46:44Z", "ok": true, "status": 200, "error": "", "latency_ms": 127, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:47:44Z", "ok": true, "status": 200, "error": "", "latency_ms": 128, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:48:44Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:49:44Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:50:44Z", "ok": true, "status": 200, "error": "", "latency_ms": 135, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:51:45Z", "ok": true, "status": 200, "error": "", "latency_ms": 151, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:52:45Z", "ok": true, "status": 200, "error": "", "latency_ms": 130, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:53:45Z", "ok": true, "status": 200, "error": "", "latency_ms": 152, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:54:45Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:55:45Z", "ok": true, "status": 200, "error": "", "latency_ms": 132, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:56:45Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:57:45Z", "ok": true, "status": 200, "error": "", "latency_ms": 115, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:58:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 128, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T12:59:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 132, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:00:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 143, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:01:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:02:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 115, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:03:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 141, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:04:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 126, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:05:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 137, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:06:47Z", "ok": true, "status": 200, "error": "", "latency_ms": 141, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:07:47Z", "ok": true, "status": 200, "error": "", "latency_ms": 117, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:08:47Z", "ok": true, "status": 200, "error": "", "latency_ms": 114, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:09:47Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:10:47Z", "ok": true, "status": 200, "error": "", "latency_ms": 114, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:11:47Z", "ok": true, "status": 200, "error": "", "latency_ms": 127, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:12:47Z", "ok": true, "status": 200, "error": "", "latency_ms": 112, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:13:47Z", "ok": true, "status": 200, "error": "", "latency_ms": 120, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:14:48Z", "ok": true, "status": 200, "error": "", "latency_ms": 141, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:15:48Z", "ok": true, "status": 200, "error": "", "latency_ms": 153, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:16:48Z", "ok": true, "status": 200, "error": "", "latency_ms": 124, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:17:48Z", "ok": true, "status": 200, "error": "", "latency_ms": 124, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:18:48Z", "ok": true, "status": 200, "error": "", "latency_ms": 127, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:19:48Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:20:48Z", "ok": true, "status": 200, "error": "", "latency_ms": 119, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:21:49Z", "ok": true, "status": 200, "error": "", "latency_ms": 128, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:22:49Z", "ok": true, "status": 200, "error": "", "latency_ms": 121, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:23:49Z", "ok": true, "status": 200, "error": "", "latency_ms": 126, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:24:49Z", "ok": true, "status": 200, "error": "", "latency_ms": 164, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:25:49Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:26:49Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:27:49Z", "ok": true, "status": 200, "error": "", "latency_ms": 139, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:28:49Z", "ok": true, "status": 200, "error": "", "latency_ms": 115, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:29:50Z", "ok": true, "status": 200, "error": "", "latency_ms": 131, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:30:50Z", "ok": true, "status": 200, "error": "", "latency_ms": 140, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:31:50Z", "ok": true, "status": 200, "error": "", "latency_ms": 137, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:32:50Z", "ok": true, "status": 200, "error": "", "latency_ms": 121, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:33:50Z", "ok": true, "status": 200, "error": "", "latency_ms": 118, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:34:50Z", "ok": true, "status": 200, "error": "", "latency_ms": 131, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:35:50Z", "ok": true, "status": 200, "error": "", "latency_ms": 124, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:36:50Z", "ok": true, "status": 200, "error": "", "latency_ms": 120, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:37:51Z", "ok": true, "status": 200, "error": "", "latency_ms": 105, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:38:51Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:39:51Z", "ok": true, "status": 200, "error": "", "latency_ms": 144, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:40:51Z", "ok": true, "status": 200, "error": "", "latency_ms": 192, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:41:51Z", "ok": true, "status": 200, "error": "", "latency_ms": 144, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:42:51Z", "ok": true, "status": 200, "error": "", "latency_ms": 158, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:43:52Z", "ok": true, "status": 200, "error": "", "latency_ms": 144, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:44:52Z", "ok": true, "status": 200, "error": "", "latency_ms": 124, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:45:52Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:46:52Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:47:52Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:48:52Z", "ok": true, "status": 200, "error": "", "latency_ms": 134, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:49:52Z", "ok": true, "status": 200, "error": "", "latency_ms": 130, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:50:52Z", "ok": true, "status": 200, "error": "", "latency_ms": 124, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:51:53Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:52:53Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:53:53Z", "ok": true, "status": 200, "error": "", "latency_ms": 146, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:54:53Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:55:53Z", "ok": true, "status": 200, "error": "", "latency_ms": 119, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:56:53Z", "ok": true, "status": 200, "error": "", "latency_ms": 138, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:57:53Z", "ok": true, "status": 200, "error": "", "latency_ms": 115, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:58:53Z", "ok": true, "status": 200, "error": "", "latency_ms": 120, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T13:59:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:00:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:01:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:02:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 105, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:03:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 109, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:04:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 113, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:05:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 115, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:06:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 136, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:07:55Z", "ok": true, "status": 200, "error": "", "latency_ms": 117, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:08:55Z", "ok": true, "status": 200, "error": "", "latency_ms": 121, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:09:55Z", "ok": true, "status": 200, "error": "", "latency_ms": 120, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:10:55Z", "ok": true, "status": 200, "error": "", "latency_ms": 129, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:11:55Z", "ok": true, "status": 200, "error": "", "latency_ms": 136, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:12:58Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3024, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:14:01Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3027, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:15:04Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3026, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:16:07Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3026, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:17:10Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9feea0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3015, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:18:13Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9fc7d0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3019, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:19:16Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9fd820>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3018, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:20:19Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9ffd10>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3012, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:21:22Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3027, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:22:25Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9da1cfe0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3017, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:23:28Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9fe420>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3015, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:24:31Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3026, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:25:34Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3023, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:26:38Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 4030, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:27:41Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3028, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:28:44Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9da1c050>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3021, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:29:47Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3025, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:30:51Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff9d9ff020>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3021, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:31:54Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3024, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:32:57Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3026, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:33:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 234, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:34:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 163, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:35:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 205, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:36:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 226, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:37:58Z", "ok": true, "status": 200, "error": "", "latency_ms": 184, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:38:58Z", "ok": true, "status": 200, "error": "", "latency_ms": 185, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:39:58Z", "ok": true, "status": 200, "error": "", "latency_ms": 225, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:40:58Z", "ok": true, "status": 200, "error": "", "latency_ms": 127, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:41:58Z", "ok": true, "status": 200, "error": "", "latency_ms": 129, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:42:58Z", "ok": true, "status": 200, "error": "", "latency_ms": 113, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:43:59Z", "ok": true, "status": 200, "error": "", "latency_ms": 334, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:44:59Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:45:59Z", "ok": true, "status": 200, "error": "", "latency_ms": 112, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:46:59Z", "ok": true, "status": 200, "error": "", "latency_ms": 139, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:47:59Z", "ok": true, "status": 200, "error": "", "latency_ms": 103, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:48:59Z", "ok": true, "status": 200, "error": "", "latency_ms": 104, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:49:59Z", "ok": true, "status": 200, "error": "", "latency_ms": 102, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:51:00Z", "ok": true, "status": 200, "error": "", "latency_ms": 221, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:52:00Z", "ok": true, "status": 200, "error": "", "latency_ms": 135, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:53:00Z", "ok": true, "status": 200, "error": "", "latency_ms": 113, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:54:00Z", "ok": true, "status": 200, "error": "", "latency_ms": 102, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:55:01Z", "ok": true, "status": 200, "error": "", "latency_ms": 1468, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:56:02Z", "ok": true, "status": 200, "error": "", "latency_ms": 149, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:57:02Z", "ok": true, "status": 200, "error": "", "latency_ms": 127, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:58:02Z", "ok": true, "status": 200, "error": "", "latency_ms": 145, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T14:59:02Z", "ok": true, "status": 200, "error": "", "latency_ms": 139, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:00:02Z", "ok": true, "status": 200, "error": "", "latency_ms": 130, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:01:02Z", "ok": true, "status": 200, "error": "", "latency_ms": 140, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:02:02Z", "ok": true, "status": 200, "error": "", "latency_ms": 135, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:03:03Z", "ok": true, "status": 200, "error": "", "latency_ms": 161, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:04:03Z", "ok": true, "status": 200, "error": "", "latency_ms": 146, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:05:03Z", "ok": true, "status": 200, "error": "", "latency_ms": 129, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:06:03Z", "ok": true, "status": 200, "error": "", "latency_ms": 132, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:07:03Z", "ok": true, "status": 200, "error": "", "latency_ms": 137, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:08:03Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:09:03Z", "ok": true, "status": 200, "error": "", "latency_ms": 162, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:10:04Z", "ok": true, "status": 200, "error": "", "latency_ms": 153, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:11:04Z", "ok": true, "status": 200, "error": "", "latency_ms": 136, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:12:04Z", "ok": true, "status": 200, "error": "", "latency_ms": 147, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:13:04Z", "ok": true, "status": 200, "error": "", "latency_ms": 143, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:14:04Z", "ok": true, "status": 200, "error": "", "latency_ms": 144, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:15:04Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T15:16:05Z", "ok": true, "status": 200, "error": "", "latency_ms": 147, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:39:15Z", "ok": true, "status": 200, "error": "", "latency_ms": 115, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:40:15Z", "ok": true, "status": 200, "error": "", "latency_ms": 120, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:41:15Z", "ok": true, "status": 200, "error": "", "latency_ms": 128, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:42:15Z", "ok": true, "status": 200, "error": "", "latency_ms": 131, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:43:16Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:44:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 1021, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:45:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 127, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:46:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 111, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:47:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 148, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T21:48:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}

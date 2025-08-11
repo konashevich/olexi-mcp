@@ -30,7 +30,21 @@ def list_databases_resource() -> str:
 # --- Tools ---
 @mcp.tool(title="List Databases")
 def list_databases() -> List[Dict]:
-    """Return all available AustLII databases with codes and descriptions."""
+    """Return all available AustLII databases with codes and descriptions.
+    
+    Provides access to 65+ databases covering Australia's entire legal system,
+    including federal courts (High Court, Federal Court, Family Court), all state
+    Supreme Courts and Courts of Appeal, specialized tribunals (VCAT, NCAT, QCAT),
+    Civil & Administrative Tribunals, Land & Environment Courts, and comprehensive
+    federal and state legislation collections.
+    
+    Each database entry includes:
+    - Database code (e.g., 'au/cases/cth/HCA' for High Court of Australia)
+    - Human-readable name and description
+    - Jurisdiction and court type classification
+    
+    Essential for intelligent database selection in legal research workflows.
+    """
     return DATABASE_TOOLS_LIST
 
 @mcp.tool(title="Search AustLII")
