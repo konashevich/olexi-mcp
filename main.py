@@ -1,6 +1,8 @@
 # main.py (Final Production Version)
 
 from fastapi import FastAPI
+from fastapi import Depends, HTTPException, Security
+from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -40,6 +42,66 @@ app = FastAPI(
     description="Backend server for the Olexi AI browser extension.",
     version="1.0.0",
 )
+# Load API keys for extension and manual clients
+API_KEY_NAME = "X-API-Key"
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+# Extension keys (auto-authorized)
+EXT_KEYS: set = set()
+keys_env = os.getenv("EXTENSION_API_KEYS")
+keys_file = os.getenv("EXTENSION_API_KEYS_FILE", "extension_api_keys.txt")
+if keys_env:
+    EXT_KEYS = {k.strip() for k in keys_env.split(",") if k.strip()}
+elif os.path.exists(keys_file):
+    with open(keys_file) as f:
+        EXT_KEYS = {line.strip() for line in f if line.strip()}
+# Manual client keys (must be pre-authorized by admin)
+CLIENT_KEYS: set = set()
+client_file = os.getenv("CLIENT_API_KEYS_FILE", "client_api_keys.txt")
+if os.path.exists(client_file):
+    with open(client_file) as f:
+        CLIENT_KEYS = {line.strip() for line in f if line.strip()}
+# Combined valid keys
+VALID_API_KEYS = EXT_KEYS | CLIENT_KEYS
+# Map key to type for origin and client checks
+KEY_TYPES: Dict[str, str] = {**{k: 'extension' for k in EXT_KEYS}, **{k: 'client' for k in CLIENT_KEYS}}
+
+def get_api_key(api_key: str = Security(api_key_header)):
+    if api_key in VALID_API_KEYS:
+        return api_key
+    raise HTTPException(status_code=403, detail="Invalid or missing API Key")
+from fastapi import Request
+from datetime import date
+
+def verify_extension_origin(request: Request, api_key: str = Depends(get_api_key)):
+    """Ensure extension keys are used only from allowed extension origins."""
+    if KEY_TYPES.get(api_key) == 'extension':
+        allowed = os.getenv("EXTENSION_ALLOWED_ORIGINS", "")
+        origins = [o.strip() for o in allowed.split(",") if o.strip()]
+        origin = request.headers.get("Origin") or request.headers.get("Referer") or ""
+        if origins and origin not in origins:
+            raise HTTPException(status_code=403, detail="Origin not allowed for this API key")
+    return api_key
+
+RATE_LIMIT_PER_DAY = 50
+MAX_DISTINCT_IPS = 10
+_api_key_usage: Dict[str, Dict] = {}
+
+def rate_limit(request: Request, api_key: str = Depends(get_api_key)):
+    """Limit to RATE_LIMIT_PER_DAY per key/day and track IPs to deter sharing."""
+    today = date.today()
+    record = _api_key_usage.get(api_key)
+    if record is None or record.get('date') != today:
+        _api_key_usage[api_key] = {'date': today, 'count': 0, 'ips': set()}
+        record = _api_key_usage[api_key]
+    client = request.client
+    ip = client.host if client else 'unknown'
+    record['ips'].add(ip)
+    if len(record['ips']) > MAX_DISTINCT_IPS:
+        raise HTTPException(status_code=429, detail="Too many distinct IPs using this API key")
+    if record['count'] >= RATE_LIMIT_PER_DAY:
+        raise HTTPException(status_code=429, detail=f"Rate limit exceeded: {RATE_LIMIT_PER_DAY} per day")
+    record['count'] += 1
+    return api_key
 
 # --- Static Files Configuration ---
 # Create static directory if it doesn't exist
@@ -341,13 +403,13 @@ class BuildUrlRequest(BaseModel):
 class BuildUrlResponse(BaseModel):
     url: str
 
-@app.get("/api/tools/databases", tags=["MCP Tools Bridge"])
-async def tools_databases() -> List[Dict]:
+@app.get("/api/tools/databases", tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
+async def tools_databases(api_key: str = Depends(get_api_key)) -> List[Dict]:
     """Return all available AustLII databases (mirrors list_databases tool)."""
     return DATABASE_TOOLS_LIST
 
-@app.post("/api/tools/plan_search", response_model=PlanResponse, tags=["MCP Tools Bridge"])
-async def tools_plan_search(req: PlanRequest) -> PlanResponse:
+@app.post("/api/tools/plan_search", response_model=PlanResponse, tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
+async def tools_plan_search(req: PlanRequest, api_key: str = Depends(get_api_key)) -> PlanResponse:
     # Upfront AustLII gate: planning is pointless if the source is down
     cached = AUSTLII_STATUS
     stale = (time.time() - _as_float(cast(Union[int, float, str, None], cached.get("checked_at")))) > 120
@@ -362,8 +424,8 @@ async def tools_plan_search(req: PlanRequest) -> PlanResponse:
     sp = generate_search_plan(req.prompt, DATABASE_TOOLS_LIST)
     return PlanResponse(query=sp.get("query", req.prompt), databases=sp.get("databases", []))
 
-@app.post("/api/tools/search_austlii", tags=["MCP Tools Bridge"])
-async def tools_search_austlii(req: SearchRequest) -> List[Dict]:
+@app.post("/api/tools/search_austlii", tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
+async def tools_search_austlii(req: SearchRequest, api_key: str = Depends(get_api_key)) -> List[Dict]:
     # Upfront AustLII gate
     cached = AUSTLII_STATUS
     stale = (time.time() - _as_float(cast(Union[int, float, str, None], cached.get("checked_at")))) > 120
@@ -406,16 +468,16 @@ async def austlii_uptime():
         "current_downtime": snap.get("current_downtime"),
     }
 
-@app.post("/api/tools/summarize_results", response_model=SummaryResponse, tags=["MCP Tools Bridge"])
-async def tools_summarize_results(req: SummaryRequest) -> SummaryResponse:
+@app.post("/api/tools/summarize_results", response_model=SummaryResponse, tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
+async def tools_summarize_results(req: SummaryRequest, api_key: str = Depends(get_api_key)) -> SummaryResponse:
     if not AI_AVAILABLE or summarize_results is None:
         from fastapi import HTTPException
         raise HTTPException(status_code=503, detail="AI is not accessible. Configure API keys and try again.")
     md = summarize_results(req.prompt, req.results)
     return SummaryResponse(markdown=md)
 
-@app.post("/api/tools/build_search_url", response_model=BuildUrlResponse, tags=["MCP Tools Bridge"])
-async def tools_build_search_url(req: BuildUrlRequest) -> BuildUrlResponse:
+@app.post("/api/tools/build_search_url", response_model=BuildUrlResponse, tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
+async def tools_build_search_url(req: BuildUrlRequest, api_key: str = Depends(get_api_key)) -> BuildUrlResponse:
     params = [("query", req.query), ("method", "boolean"), ("meta", "/au")]
     for db_code in req.databases:
         params.append(("mask_path", db_code))
