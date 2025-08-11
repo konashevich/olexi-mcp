@@ -56,6 +56,19 @@ def build_search_url(query: str, databases: List[str]) -> str:
 # --- Optional: progress example for long scrapes ---
 @mcp.tool(title="Search with Progress")
 async def search_with_progress(query: str, databases: List[str], ctx: Context) -> List[SearchResultItem]:
+    """Execute an AustLII search while reporting progress updates.
+
+    This variant behaves like search_austlii but emits progress/status via the
+    MCP context, allowing UIs to show incremental feedback during longer scrapes.
+
+    Args:
+        query: The Boolean search query string.
+        databases: List of AustLII database codes to search (mask_path values).
+        ctx: MCP execution context used to report progress and messages.
+
+    Returns:
+        A list of search result items with title, URL, and optional metadata.
+    """
     await ctx.info("Starting AustLII search...")
     await ctx.report_progress(0.3, total=1.0, message="Scraping")
     results = scrape(query, databases)
@@ -71,12 +84,13 @@ async def search_with_progress(query: str, databases: List[str], ctx: Context) -
 async def mcp_health(request: Request):  # type: ignore[override]
     return JSONResponse({"status": "ok", "name": mcp.name, "transport": "streamable-http"})
 
-@mcp.custom_route("/", methods=["GET"], include_in_schema=False)
-async def mcp_index(request: Request):  # type: ignore[override]
+@mcp.custom_route("/info", methods=["GET"], include_in_schema=False)
+async def mcp_info(request: Request):  # type: ignore[override]
     return JSONResponse({
         "message": "Olexi MCP Streamable HTTP endpoint",
         "health": "/mcp/health",
-        "note": "Use an MCP host (e.g., Continue) to connect to /mcp."
+        "transport": "streamable-http",
+        "hint": "Your MCP host should POST to /mcp for the protocol handshake."
     })
 
 # --- Entry point for stdio/CLI ---

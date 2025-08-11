@@ -19,6 +19,7 @@ from database_map import DATABASE_TOOLS_LIST
 import urllib.parse # To help build the final search URL
 import os
 from typing import List, Dict, Optional
+import contextlib
 import asyncio
 import time
 from pydantic import BaseModel
@@ -26,6 +27,7 @@ import secrets
 import logging
 import json
 from logging.handlers import RotatingFileHandler
+from contextlib import AsyncExitStack
 from collections import deque
 from typing import Deque
 
@@ -188,7 +190,19 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Mount MCP Streamable HTTP transport under /mcp for hybrid mode (if available)
 if olexi_mcp:
-    app.mount("/mcp", olexi_mcp.streamable_http_app())
+    # Ensure the MCP app expects POST at '/' within the sub-app, so external '/mcp' works
+    try:
+        olexi_mcp.settings.streamable_http_path = "/"
+    except Exception:
+        pass
+    mcp_subapp = olexi_mcp.streamable_http_app()
+    # Save session manager to integrate its lifespan at the top-level app
+    try:
+        app.state.mcp_session_mgr = olexi_mcp.session_manager  # created lazily by streamable_http_app()
+        app.state.mcp_exit_stack = AsyncExitStack()
+    except Exception:
+        app.state.mcp_session_mgr = None
+    app.mount("/mcp", mcp_subapp)
 
 # --- Proactive AustLII Monitoring ---
 AUSTLII_STATUS: Dict[str, Optional[object]] = {
@@ -377,6 +391,21 @@ async def _poll_austlii_health(interval: int = 60) -> None:
 async def _start_monitors() -> None:
     # Start background health poller
     app.state.austlii_task = asyncio.create_task(_poll_austlii_health(AUSTLII_POLL_INTERVAL))
+    # Start MCP session manager if available
+    mgr = getattr(app.state, "mcp_session_mgr", None)
+    stack = getattr(app.state, "mcp_exit_stack", None)
+    if mgr and stack:
+        await stack.enter_async_context(mgr.run())
+
+@app.on_event("shutdown")
+async def _stop_monitors() -> None:
+    # Stop MCP session manager if running
+    stack = getattr(app.state, "mcp_exit_stack", None)
+    try:
+        if stack:
+            await stack.aclose()
+    except Exception:
+        pass
 
 # --- CORS Configuration ---
 origins = ["*"]

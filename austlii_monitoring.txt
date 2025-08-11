@@ -459,3 +459,82 @@
 {"ts": "2025-08-11T10:10:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 126, "source": "poll", "interval_s": 60}
 {"ts": "2025-08-11T10:11:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
 {"ts": "2025-08-11T10:12:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 139, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:13:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 154, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:14:10Z", "ok": true, "status": 200, "error": "", "latency_ms": 126, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:15:10Z", "ok": true, "status": 200, "error": "", "latency_ms": 120, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:16:10Z", "ok": true, "status": 200, "error": "", "latency_ms": 114, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:24:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 109, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:25:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 179, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:26:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 119, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:27:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 119, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:28:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:29:35Z", "ok": true, "status": 200, "error": "", "latency_ms": 119, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:29:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 113, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:37:01Z", "ok": true, "status": 200, "error": "", "latency_ms": 111, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:38:01Z", "ok": true, "status": 200, "error": "", "latency_ms": 112, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:39:01Z", "ok": true, "status": 200, "error": "", "latency_ms": 118, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:40:01Z", "ok": true, "status": 200, "error": "", "latency_ms": 107, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:41:01Z", "ok": true, "status": 200, "error": "", "latency_ms": 107, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:41:19Z", "ok": true, "status": 200, "error": "", "latency_ms": 113, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:41:39Z", "ok": true, "status": 200, "error": "", "latency_ms": 105, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:44:08Z", "ok": true, "status": 200, "error": "", "latency_ms": 110, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:46:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 110, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:47:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 118, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:48:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 108, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:49:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 123, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:50:17Z", "ok": true, "status": 200, "error": "", "latency_ms": 140, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:51:18Z", "ok": true, "status": 200, "error": "", "latency_ms": 585, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:51:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 235, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:52:42Z", "ok": true, "status": 200, "error": "", "latency_ms": 142, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:53:04Z", "ok": true, "status": 200, "error": "", "latency_ms": 118, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:54:06Z", "ok": true, "status": 200, "error": "", "latency_ms": 112, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:55:06Z", "ok": true, "status": 200, "error": "", "latency_ms": 118, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:56:07Z", "ok": true, "status": 200, "error": "", "latency_ms": 112, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:57:07Z", "ok": true, "status": 200, "error": "", "latency_ms": 115, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:58:07Z", "ok": true, "status": 200, "error": "", "latency_ms": 112, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T10:59:08Z", "ok": true, "status": 200, "error": "", "latency_ms": 1157, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:00:08Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:01:08Z", "ok": true, "status": 200, "error": "", "latency_ms": 100, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:02:08Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:03:08Z", "ok": true, "status": 200, "error": "", "latency_ms": 128, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:04:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 130, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:05:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 114, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:06:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 128, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:07:08Z", "ok": true, "status": 200, "error": "", "latency_ms": 107, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:07:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 110, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:08:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 125, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:08:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 114, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:08:54Z", "ok": true, "status": 200, "error": "", "latency_ms": 715, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:09:09Z", "ok": true, "status": 200, "error": "", "latency_ms": 106, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:09:55Z", "ok": true, "status": 200, "error": "", "latency_ms": 926, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:10:55Z", "ok": true, "status": 200, "error": "", "latency_ms": 111, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:11:55Z", "ok": true, "status": 200, "error": "", "latency_ms": 111, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:12:58Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7bcc20>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3013, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:14:01Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f52b0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3013, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:15:04Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f4ef0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3015, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:16:07Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f4890>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3016, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:17:11Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3026, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:18:14Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f8156d0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3016, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:19:17Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f6fc0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3024, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:20:20Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f5190>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3016, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:21:23Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f54f0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3015, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:22:26Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f7020>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3014, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:23:29Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f5bb0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3015, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:24:32Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7be780>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3014, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:25:35Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f5b50>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3014, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:26:38Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f7440>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3022, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:27:41Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f5400>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3015, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:28:44Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f4cb0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3015, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:29:47Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7f61b0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3014, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:30:50Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7be720>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3017, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:31:53Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f7bdeb0>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3018, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:32:56Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffff7f9e7a70>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3014, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:33:56Z", "ok": true, "status": 200, "error": "", "latency_ms": 108, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:34:56Z", "ok": true, "status": 200, "error": "", "latency_ms": 109, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:35:56Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:36:56Z", "ok": true, "status": 200, "error": "", "latency_ms": 109, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:37:56Z", "ok": true, "status": 200, "error": "", "latency_ms": 101, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:38:56Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:39:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 111, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:40:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 60}
+{"ts": "2025-08-11T11:41:57Z", "ok": true, "status": 200, "error": "", "latency_ms": 139, "source": "poll", "interval_s": 60}
