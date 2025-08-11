@@ -22,6 +22,7 @@ from typing import List, Dict, Optional
 import asyncio
 import time
 from pydantic import BaseModel
+import secrets
 import logging
 import json
 from logging.handlers import RotatingFileHandler
@@ -64,17 +65,40 @@ if os.path.exists(client_file):
 VALID_API_KEYS = EXT_KEYS | CLIENT_KEYS
 # Map key to type for origin and client checks
 KEY_TYPES: Dict[str, str] = {**{k: 'extension' for k in EXT_KEYS}, **{k: 'client' for k in CLIENT_KEYS}}
+# Admin API key (optional) for managing client keys
+ADMIN_KEY = os.getenv("ADMIN_API_KEY", "")
+ADMIN_KEY_NAME = "X-Admin-Key"
+admin_key_header = APIKeyHeader(name=ADMIN_KEY_NAME, auto_error=False)
 
 def get_api_key(api_key: str = Security(api_key_header)):
     if api_key in VALID_API_KEYS:
         return api_key
+    try:
+        security_logger.info(json.dumps({
+            "event": "invalid_api_key",
+            "ts": _to_iso(time.time()),
+            "has_header": bool(api_key),
+            "header_len": len(api_key or ""),
+            "valid_keys_count": len(VALID_API_KEYS),
+        }))
+    except Exception:
+        pass
     raise HTTPException(status_code=403, detail="Invalid or missing API Key")
 from fastapi import Request
 from datetime import date
 
 def verify_extension_origin(request: Request, api_key: str = Depends(get_api_key)):
-    """Ensure extension keys are used only from allowed extension origins."""
+    """Ensure extension keys are used only from allowed extension contexts (UA/ID/origin)."""
     if KEY_TYPES.get(api_key) == 'extension':
+        ua_prefix = os.getenv("EXTENSION_UA_PREFIX", "").strip()
+        ua = request.headers.get("User-Agent", "")
+        if ua_prefix and not ua.startswith(ua_prefix):
+            raise HTTPException(status_code=403, detail="User-Agent not allowed for this API key")
+        ids_cfg = os.getenv("EXTENSION_IDS", "")
+        allowed_ids = [i.strip() for i in ids_cfg.split(",") if i.strip()]
+        ext_id = request.headers.get("X-Extension-Id", "").strip()
+        if allowed_ids and ext_id not in allowed_ids:
+            raise HTTPException(status_code=403, detail="Extension ID not allowed for this API key")
         allowed = os.getenv("EXTENSION_ALLOWED_ORIGINS", "")
         origins = [o.strip() for o in allowed.split(",") if o.strip()]
         origin = request.headers.get("Origin") or request.headers.get("Referer") or ""
@@ -82,8 +106,8 @@ def verify_extension_origin(request: Request, api_key: str = Depends(get_api_key
             raise HTTPException(status_code=403, detail="Origin not allowed for this API key")
     return api_key
 
-RATE_LIMIT_PER_DAY = 50
-MAX_DISTINCT_IPS = 10
+RATE_LIMIT_PER_DAY = int(os.getenv("RATE_LIMIT_PER_DAY", "50"))
+MAX_DISTINCT_IPS = int(os.getenv("MAX_DISTINCT_IPS", "10"))
 _api_key_usage: Dict[str, Dict] = {}
 
 def rate_limit(request: Request, api_key: str = Depends(get_api_key)):
@@ -97,11 +121,65 @@ def rate_limit(request: Request, api_key: str = Depends(get_api_key)):
     ip = client.host if client else 'unknown'
     record['ips'].add(ip)
     if len(record['ips']) > MAX_DISTINCT_IPS:
+        try:
+            security_logger.info(json.dumps({"event": "too_many_ips", "ts": _to_iso(time.time()), "key_type": KEY_TYPES.get(api_key), "ips": len(record['ips'])}))
+        except Exception:
+            pass
         raise HTTPException(status_code=429, detail="Too many distinct IPs using this API key")
     if record['count'] >= RATE_LIMIT_PER_DAY:
+        try:
+            security_logger.info(json.dumps({"event": "rate_limited", "ts": _to_iso(time.time()), "key_type": KEY_TYPES.get(api_key), "count": record['count']}))
+        except Exception:
+            pass
         raise HTTPException(status_code=429, detail=f"Rate limit exceeded: {RATE_LIMIT_PER_DAY} per day")
     record['count'] += 1
     return api_key
+
+# --- Admin endpoints to manage client API keys ---
+def _persist_client_keys() -> None:
+    try:
+        with open(client_file, "w") as f:
+            for k in sorted(CLIENT_KEYS):
+                f.write(k + "\n")
+    except Exception:
+        pass
+
+def _require_admin(admin_key: Optional[str]):
+    if not ADMIN_KEY:
+        raise HTTPException(status_code=503, detail="Admin API not configured")
+    if not admin_key or admin_key != ADMIN_KEY:
+        raise HTTPException(status_code=403, detail="Admin key invalid")
+    return True
+
+@app.get("/admin/clients", tags=["Admin"])
+async def list_clients(admin_key: Optional[str] = Security(admin_key_header)):
+    _require_admin(admin_key)
+    return {"count": len(CLIENT_KEYS), "keys": sorted(CLIENT_KEYS)}
+
+class NewClientRequest(BaseModel):
+    key: Optional[str] = None
+
+@app.post("/admin/clients", tags=["Admin"])
+async def add_client(req: NewClientRequest, admin_key: Optional[str] = Security(admin_key_header)):
+    _require_admin(admin_key)
+    new_key = (req.key or "").strip() or secrets.token_urlsafe(32)
+    CLIENT_KEYS.add(new_key)
+    VALID_API_KEYS.add(new_key)
+    KEY_TYPES[new_key] = 'client'
+    _persist_client_keys()
+    return {"key": new_key}
+
+@app.delete("/admin/clients/{key}", tags=["Admin"])
+async def delete_client(key: str, admin_key: Optional[str] = Security(admin_key_header)):
+    _require_admin(admin_key)
+    removed = False
+    if key in CLIENT_KEYS:
+        CLIENT_KEYS.remove(key)
+        removed = True
+    VALID_API_KEYS.discard(key)
+    KEY_TYPES.pop(key, None)
+    _persist_client_keys()
+    return {"removed": removed}
 
 # --- Static Files Configuration ---
 # Create static directory if it doesn't exist
@@ -154,6 +232,19 @@ if not monitor_logger.handlers:
         monitor_logger.propagate = False
     except Exception:
         # Logging failures are non-fatal
+        pass
+
+# Dedicated security logger (JSONL)
+SECURITY_LOG = os.getenv("SECURITY_LOG", "security_events.log")
+security_logger = logging.getLogger("security")
+if not security_logger.handlers:
+    security_logger.setLevel(logging.INFO)
+    try:
+        _sec_handler = RotatingFileHandler(SECURITY_LOG, maxBytes=1048576, backupCount=3)
+        _sec_handler.setFormatter(logging.Formatter("%(message)s"))
+        security_logger.addHandler(_sec_handler)
+        security_logger.propagate = False
+    except Exception:
         pass
 
 def _as_int(val: Optional[Union[int, float, str]], default: int = 0) -> int:
