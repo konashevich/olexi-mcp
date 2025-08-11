@@ -1,11 +1,36 @@
 # austlii_scraper.py (Final Production Version)
 
+import time
 import requests
 from bs4 import BeautifulSoup
-from typing import List
+from bs4.element import Tag
+from typing import List, Tuple, Optional
+from urllib.parse import urljoin
 from models import SearchResultItem
 
 BASE_URL = "https://www.austlii.edu.au/cgi-bin/sinosrch.cgi"
+HOME_URL = "https://www.austlii.edu.au/"
+
+
+class AustliiUnavailableError(Exception):
+    """Raised when AustLII is unreachable or returns an error consistently."""
+    pass
+
+
+def check_austlii_health(timeout: int = 5) -> Tuple[bool, int, str]:
+    """
+    Lightweight health check against AustLII homepage.
+    Returns (ok, status_code, error_message)
+    """
+    headers = {
+        "Referer": "https://www.austlii.edu.au/forms/search1.html",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    }
+    try:
+        resp = requests.get(HOME_URL, headers=headers, timeout=timeout)
+        return (200 <= resp.status_code < 400, resp.status_code, "")
+    except requests.RequestException as e:
+        return (False, 0, str(e))
 
 def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
     """
@@ -28,13 +53,26 @@ def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
 
     print(f"Constructing request to AustLII with params: {params}")
 
-    try:
-        response = requests.get(BASE_URL, params=params, headers=headers, timeout=15)
-        print(f"AustLII response status code: {response.status_code}")
-        response.raise_for_status()
-    except requests.RequestException as e:
-        print(f"Error fetching data from AustLII: {e}")
-        return []
+    # Simple retry (once) with small backoff for transient blips
+    last_err: Optional[Exception] = None
+    response: Optional[requests.Response] = None
+    for attempt in range(2):
+        try:
+            response = requests.get(BASE_URL, params=params, headers=headers, timeout=15)
+            print(f"AustLII response status code: {response.status_code}")
+            response.raise_for_status()
+            break
+        except requests.RequestException as e:
+            last_err = e
+            print(f"Error fetching data from AustLII (attempt {attempt+1}): {e}")
+            if attempt == 0:
+                time.sleep(1.0)  # brief backoff
+            else:
+                raise AustliiUnavailableError(str(e))
+
+    if response is None:
+        # Should not happen due to raise above, but keep guard
+        raise AustliiUnavailableError(str(last_err) if last_err else "Unknown AustLII error")
 
     # Debug output disabled
     # To re-enable debug output, uncomment the following lines:
@@ -46,29 +84,30 @@ def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
     
     # --- FINAL CORRECTED PARSING LOGIC BASED ON YOUR SCREENSHOT ---
     # 1. Find the specific container for the search results.
-    results_container = soup.find('div', class_='card')
+    results_container: Optional[Tag] = soup.find('div', attrs={'class': 'card'})  # type: ignore[assignment]
     
     if not results_container:
         print("Could not find results container (<div class='card'>). Scraper needs update.")
         return []
 
     # 2. Now, find all the result list items *within* that container.
-    list_items = results_container.find_all('li', class_='multi')
+    list_items = results_container.find_all('li', attrs={'class': 'multi'})
 
     if not list_items:
         print("Could not find any list items (<li class='multi'>) within the card container.")
         return []
 
     for item in list_items:
-        title_tag = item.find('a')
+        title_tag: Optional[Tag] = item.find('a')  # type: ignore[assignment]
         
-        if title_tag and title_tag.has_attr('href'):
+        href_val = title_tag.get('href') if title_tag else None
+        if title_tag and isinstance(href_val, str):
             title = title_tag.get_text(strip=True)
-            full_url = requests.compat.urljoin("https://www.austlii.edu.au", title_tag['href'])
+            full_url = urljoin("https://www.austlii.edu.au", href_val)
             
             # Extract relevance from the span with class 'right'
-            relevance_tag = item.find('span', class_='right')
-            metadata = relevance_tag.get_text(strip=True) if relevance_tag else "Relevance not found"
+            relevance_tag: Optional[Tag] = item.find('span', attrs={'class': 'right'})  # type: ignore[assignment]
+            metadata = relevance_tag.get_text(strip=True) if isinstance(relevance_tag, Tag) else "Relevance not found"
 
             results.append(SearchResultItem(
                 title=title,

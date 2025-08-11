@@ -7,3 +7,4 @@ requests
 beautifulsoup4
 google-genai
 python-dotenv
+mcp[cli]
