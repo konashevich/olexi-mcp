@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from models import ChatRequest, ChatResponse
 from austlii_scraper import search_austlii, check_austlii_health, AustliiUnavailableError
 # Defer AI imports so server can start even if AI key is missing
 try:
@@ -311,80 +310,7 @@ async def get_status():
         "austlii": status_obj,
     }
 
-@app.post("/api/olexi-chat", response_model=ChatResponse, tags=["AI Chat"])
-async def handle_chat_request(request: ChatRequest):
-    """
-    The main endpoint that orchestrates the full AI-driven search and summary process.
-    """
-    print(f"Received prompt: {request.prompt}")
-
-    if not AI_AVAILABLE:
-        # AI is mandatory; do not fabricate responses or fall back
-        from fastapi import HTTPException
-        raise HTTPException(status_code=503, detail="AI is not accessible. Configure API keys and try again.")
-
-    # Upfront AustLII availability gate to avoid unnecessary AI calls
-    cached = AUSTLII_STATUS
-    stale = (time.time() - _as_float(cast(Union[int, float, str, None], cached.get("checked_at")))) > 120
-    if cached.get("ok") is False or stale:
-        ok, code, err = check_austlii_health(timeout=3)
-        if not ok:
-            from fastapi import HTTPException
-            raise HTTPException(status_code=503, detail=f"AustLII is not accessible (status {code}). {err}")
-
-    # --- Phase 2: Analyze & Strategize (MCP Call #1) ---
-    try:
-        assert generate_search_plan is not None
-        search_plan = generate_search_plan(request.prompt, DATABASE_TOOLS_LIST)
-        query_to_search = search_plan.get("query", request.prompt)
-        databases_to_search = search_plan.get("databases", [])
-    except Exception as e:
-        from fastapi import HTTPException
-        print(f"Error generating search plan: {e}")
-        raise HTTPException(status_code=503, detail="AI planning failed. Please try again later.")
-
-    # --- Phase 3: Execute & Scrape ---
-    try:
-        scraped_results = search_austlii(query_to_search, databases_to_search)
-    except AustliiUnavailableError as e:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=503, detail=f"AustLII is not accessible: {e}")
-
-    # Convert Pydantic models to simple dicts for the AI to process
-    # Manually convert to ensure all URLs are strings
-    scraped_results_dicts = []
-    for item in scraped_results:
-        scraped_results_dicts.append({
-            "title": item.title,
-            "url": str(item.url),  # Force conversion to string
-            "metadata": item.metadata
-        })
-
-    # --- Phase 4: Synthesize & Formulate (MCP Call #2) ---
-    try:
-        assert summarize_results is not None
-        ai_summary = summarize_results(request.prompt, scraped_results_dicts)
-    except Exception as e:
-        from fastapi import HTTPException
-        print(f"Error summarizing results: {e}")
-        raise HTTPException(status_code=503, detail="AI summarization failed. Please try again later.")
-    
-    # --- Phase 5: Deliver (Construct the final search URL) ---
-    # We can now dynamically build the real search URL for the user to click.
-    params = [
-        ("query", query_to_search),
-        ("method", "boolean"),
-        ("meta", "/au")
-    ]
-    for db_code in databases_to_search:
-        params.append(("mask_path", db_code))
-    
-    final_search_url = f"https://www.austlii.edu.au/cgi-bin/sinosrch.cgi?{urllib.parse.urlencode(params)}"
-
-    return ChatResponse(
-        ai_response=ai_summary,
-        search_results_url=final_search_url
-    )
+## Legacy chat endpoint removed (non-MCP). Use /api/tools/* instead.
 
 # ==============================
 # MCP Tools Bridge (REST Facade)

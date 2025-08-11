@@ -5,49 +5,29 @@ import requests
 import json
 import time
 
-API_URL = "http://127.0.0.1:3000/api/olexi-chat"
+TOOLS_BASE = "http://127.0.0.1:3000/api/tools"
 
-def test_api():
-    print("Testing Olexi API...")
-    
-    # Test data
-    test_payload = {
-        "prompt": "test question about contracts",
-        "context_url": "https://example.com"
-    }
-    
+def test_tools_flow():
+    print("Testing Olexi Tools Bridge...")
+
     try:
-        print(f"Sending request to: {API_URL}")
-        print(f"Payload: {json.dumps(test_payload, indent=2)}")
-        
-        start_time = time.time()
-        response = requests.post(
-            API_URL, 
-            json=test_payload,
-            headers={"Content-Type": "application/json"},
-            timeout=60  # 60 second timeout
-        )
-        end_time = time.time()
-        
-        print(f"Response time: {end_time - start_time:.2f} seconds")
-        print(f"Status code: {response.status_code}")
-        print(f"Headers: {dict(response.headers)}")
-        
-        if response.status_code == 200:
-            result = response.json()
-            print("SUCCESS!")
-            print(f"AI Response: {result.get('ai_response', 'No ai_response field')}")
-            print(f"Search URL: {result.get('search_results_url', 'No search_results_url field')}")
+        # databases
+        r = requests.get(f"{TOOLS_BASE}/databases", timeout=10)
+        print("databases:", r.status_code, len(r.json()) if r.ok else r.text)
+
+        # plan (may 503 if AI unavailable)
+        payload = {"prompt": "test question about contracts"}
+        rp = requests.post(f"{TOOLS_BASE}/plan_search", json=payload, timeout=30)
+        print("plan_search:", rp.status_code, rp.text[:120])
+
+        if rp.ok:
+            plan = rp.json()
+            rs = requests.post(f"{TOOLS_BASE}/search_austlii", json={"query": plan["query"], "databases": plan["databases"]}, timeout=30)
+            print("search_austlii:", rs.status_code, (len(rs.json()) if rs.ok else rs.text))
         else:
-            print("ERROR!")
-            print(f"Response text: {response.text}")
-            
-    except requests.exceptions.Timeout:
-        print("ERROR: Request timed out after 60 seconds")
-    except requests.exceptions.ConnectionError as e:
-        print(f"ERROR: Could not connect to server: {e}")
+            print("plan failed (likely AI unavailable); skipping search")
     except Exception as e:
-        print(f"ERROR: {e}")
+        print("ERROR:", e)
 
 if __name__ == "__main__":
-    test_api()
+    test_tools_flow()

@@ -23,26 +23,21 @@ def test_server():
     except Exception as e:
         print(f"❌ API docs not reachable: {e}")
     
-    # Test 3: Test the main API endpoint
-    print("\n🔍 Testing API endpoint...")
+    # Test 3: Test Tools Bridge endpoints
+    print("\n🔍 Testing Tools Bridge endpoints...")
     try:
-        test_payload = {
-            "prompt": "test query",
-            "context_url": "https://example.com"
-        }
-        response = requests.post(
-            "http://127.0.0.1:3000/api/olexi-chat",
-            json=test_payload,
-            headers={"Content-Type": "application/json"},
-            timeout=30
-        )
-        print(f"✅ API endpoint status: {response.status_code}")
-        if response.status_code == 200:
-            print(f"   Response: {response.json()}")
+        r = requests.get("http://127.0.0.1:3000/api/tools/databases", timeout=5)
+        print(f"✅ tools/databases: {r.status_code}")
+        rp = requests.post("http://127.0.0.1:3000/api/tools/plan_search", json={"prompt": "test query"}, timeout=10)
+        print(f"✅ tools/plan_search: {rp.status_code}")
+        if rp.ok:
+            plan = rp.json()
+            rs = requests.post("http://127.0.0.1:3000/api/tools/search_austlii", json={"query": plan["query"], "databases": plan["databases"]}, timeout=15)
+            print(f"✅ tools/search_austlii: {rs.status_code}")
         else:
-            print(f"   Error response: {response.text}")
+            print("   plan_search unavailable (likely AI not configured)")
     except Exception as e:
-        print(f"❌ API endpoint error: {e}")
+        print(f"❌ Tools Bridge error: {e}")
         return False
     
     return True
