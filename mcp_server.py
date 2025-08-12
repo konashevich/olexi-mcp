@@ -1,5 +1,10 @@
 # mcp_server.py
-# Hybrid MCP server exposing Olexi tools, mountable under FastAPI and runnable via stdio.
+# Hybrid MCP server exposing Olexi AI legal research tools.
+# Mountable under FastAPI for HTTP transport and runnable via stdio for development.
+# 
+# Part of the Olexi AI project: significantly lowering barriers to legal research
+# on Australia's primary legal database (AustLII) through intelligent conversational
+# interfaces and sophisticated web scraping of legacy CGI endpoints.
 
 from typing import List, Dict, Optional
 from pydantic import BaseModel
@@ -18,38 +23,55 @@ class SearchResultItem(BaseModel):
     metadata: Optional[str] = None
 
 # --- Create FastMCP server instance ---
-mcp = FastMCP("Olexi MCP Server")
+mcp = FastMCP("Olexi MCP Server")  # AI-powered legal research assistant for AustLII
 
 # --- Resources ---
 @mcp.resource("olexi://databases")
 def list_databases_resource() -> str:
-    """JSON of available AustLII database tools."""
+    """JSON of available AustLII database tools.
+    
+    Provides structured access to Australian legal database system for 
+    programmatic database selection and intelligent query routing.
+    """
     import json
     return json.dumps(DATABASE_TOOLS_LIST, indent=2)
 
 # --- Tools ---
 @mcp.tool(title="List Databases")
 def list_databases() -> List[Dict]:
-    """Return all available AustLII databases with codes and descriptions.
+    """Get available Australian legal databases with their codes and descriptions.
     
-    Provides access to 65+ databases covering Australia's entire legal system,
-    including federal courts (High Court, Federal Court, Family Court), all state
-    Supreme Courts and Courts of Appeal, specialized tribunals (VCAT, NCAT, QCAT),
-    Civil & Administrative Tribunals, Land & Environment Courts, and comprehensive
-    federal and state legislation collections.
+    Returns database options for legal research across federal courts, state courts, 
+    specialized tribunals, and legislation. Use this first to understand what 
+    databases are available before searching.
     
-    Each database entry includes:
-    - Database code (e.g., 'au/cases/cth/HCA' for High Court of Australia)
-    - Human-readable name and description
-    - Jurisdiction and court type classification
-    
-    Essential for intelligent database selection in legal research workflows.
+    Returns:
+        List of database objects with code, name, and description for each available
+        legal database. Essential for determining search scope and database selection.
     """
     return DATABASE_TOOLS_LIST
 
 @mcp.tool(title="Search AustLII")
 def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
-    """Execute AustLII search and return structured results."""
+    """Search Australian legal databases for cases, legislation, and legal documents.
+    
+    Performs comprehensive legal research across selected database codes. Returns 
+    detailed results with titles, URLs, and metadata for further research.
+    
+    Args:
+        query: Legal search terms (supports boolean operators like AND, OR, NOT)
+        databases: List of database codes from list_databases (e.g., ['au/cases/cth/HCA'])
+    
+    Returns:
+        List of legal documents with title, URL, and metadata. Typically returns 
+        hundreds to thousands of results for comprehensive legal research.
+    
+    Limitations:
+        Dependent on external AustLII availability; large result sets may take time to retrieve.
+    
+    Best for: Case law research, statutory interpretation, legal precedent analysis,
+    citation verification, and comprehensive legal document discovery.
+    """
     results = scrape(query, databases)
     # Convert to primitive dicts then model to ensure str URLs
     output: List[SearchResultItem] = []
@@ -61,7 +83,22 @@ def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
 
 @mcp.tool(title="Build Search URL")
 def build_search_url(query: str, databases: List[str]) -> str:
-    """Return the final AustLII search URL for UX handoff."""
+    """Generate a direct URL to AustLII search results.
+    
+    Takes the same query and databases as search_austlii but returns a web link 
+    instead of parsed results. Use when users want to bookmark, share, or manually 
+    browse the search results page. No network call is made by this tool.
+    
+    Args:
+        query: Legal search terms (same format as search_austlii)
+        databases: List of database codes to include in search scope
+    
+    Returns:
+        Complete HTTPS URL to AustLII search results page for immediate browser access.
+        
+    Use when: Users need a shareable link, want to browse results manually, or 
+    require direct access to the original search interface.
+    """
     params = [("query", query), ("method", "boolean"), ("meta", "/au")]
     for db_code in databases:
         params.append(("mask_path", db_code))
@@ -70,18 +107,26 @@ def build_search_url(query: str, databases: List[str]) -> str:
 # --- Optional: progress example for long scrapes ---
 @mcp.tool(title="Search with Progress")
 async def search_with_progress(query: str, databases: List[str], ctx: Context) -> List[SearchResultItem]:
-    """Execute an AustLII search while reporting progress updates.
-
-    This variant behaves like search_austlii but emits progress/status via the
-    MCP context, allowing UIs to show incremental feedback during longer scrapes.
+    """Search Australian legal databases with real-time progress updates.
+    
+    Identical functionality to search_austlii but provides status updates during 
+    execution. Use for large searches that may take significant time, when user 
+    interface needs progress feedback.
 
     Args:
-        query: The Boolean search query string.
-        databases: List of AustLII database codes to search (mask_path values).
-        ctx: MCP execution context used to report progress and messages.
+        query: Legal search terms (supports boolean operators like AND, OR, NOT)
+        databases: List of database codes from list_databases
+        ctx: MCP execution context for progress reporting
 
     Returns:
-        A list of search result items with title, URL, and optional metadata.
+        List of legal documents with title, URL, and metadata. Same results as 
+        search_austlii but with progress updates sent during processing.
+    
+    Limitations:
+        Dependent on external AustLII availability; duration scales with result size and databases selected.
+        
+    Use when: Searching across many databases, expecting large result sets, or 
+    when user interface requires progress indication for better user experience.
     """
     await ctx.info("Starting AustLII search...")
     await ctx.report_progress(0.3, total=1.0, message="Scraping")
