@@ -33,14 +33,18 @@ Extension (UI) → Host-led SSE session → MCP tool calls → AustLII → Previ
 - Browser extension: captures a natural-language prompt and streams a research session via Server-Sent Events (SSE).
 - Host agent (server-side):
   1) Plans the AustLII query + database set; 2) invokes MCP tools; 3) applies filters/fallbacks; 4) produces a concise summary plus follow-up questions.
-- MCP server (tool-only; mounted at /mcp): search_austlii, search_with_progress, build_search_url.
+- MCP server (tool-only): search_austlii, search_with_progress, build_search_url.
+  - Production (Cloud Run): MCP Streamable HTTP is served at the service root path "/" (no /mcp).
+  - Local (combined app): the MCP transport may be mounted under "/mcp" when running the legacy host+MCP server.
 - Scraper: performs the CGI request with required headers and parses div.card > li.multi.
 
 ## Endpoints
 - GET `/status` — JSON status (AI availability, MCP presence, and AustLII health snapshot)
 - SSE research session (host-led):
   - POST `/session/research` — streams planning → MCP search_with_progress → preview → summary
-- MCP server (Streamable HTTP): mounted at `/mcp`
+- MCP server (Streamable HTTP):
+  - Production: served at the root path `/` (POST handshake at `/`).
+  - Local legacy mode: mounted at `/mcp`.
   - Connect a compatible host to use the tools (list_databases, search_austlii, build_search_url)
 - AustLII health:
   - GET `/austlii/health` — health + uptime summary (use `?live=true` to probe now)
@@ -77,7 +81,9 @@ curl -s http://127.0.0.1:3000/austlii/health | jq
 ```
 
 ## MCP usage (tool-only)
-- Configure a host (e.g., VS Code Continue) to connect to `/mcp` over HTTP transport. Tools: `list_databases`, `search_austlii`, `search_with_progress`, `build_search_url`.
+- Production (recommended): point your MCP host at the Cloud Run service base URL; the MCP transport is at `/` (no path).
+  - AU endpoint: https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/
+- Local (legacy combined app): connect to `/mcp` if you run the host+MCP server together.
 - Planning and summarisation remain in the host; this server never embeds an AI model.
 
 ## AustLII mechanics (implementation notes)
@@ -88,7 +94,9 @@ curl -s http://127.0.0.1:3000/austlii/health | jq
 - URL builder: repeat `mask_path` keys and percent-encode parameters
 
 ## Deployment
-- Dockerfile and Cloud Run ready (Container exposes `$PORT`, default 8080 in Cloud Run).
+- Dockerfile and Cloud Run ready (container exposes `$PORT`, default 8080 in Cloud Run).
+- Production region: deployed in Australia (australia-southeast1) for lower latency to Australian users and data locality.
+  - Service URL (MCP at root): https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/
 - See `docs/deploy_cloud_run.md` for build, push, and deploy steps, and suggested environment configuration.
 
 ## Ethics and respectful use
