@@ -37,5 +37,5 @@ ENV AUSTLII_POLL_INTERVAL=120 \
     AUSTLII_RETRIES=2 \
     AUSTLII_BACKOFF=0.5
 
-# Start the server (Cloud Run injects $PORT, default 8080)
+# Start MCP-only server at service root (Cloud Run injects $PORT, default 8080)
 CMD ["/app/.venv/bin/python", "run.py"]
