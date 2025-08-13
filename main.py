@@ -470,6 +470,13 @@ async def read_root():
         return FileResponse(index_path, media_type="text/html")
     return {"status": "Olexi AI server is running", "port": 3000, "databases": len(DATABASE_TOOLS_LIST), "mcp": bool(olexi_mcp)}
 
+@app.get("/privacy", include_in_schema=False)
+async def privacy_page():
+    path = "static/privacy-mcp.html"
+    if os.path.exists(path):
+        return FileResponse(path, media_type="text/html")
+    return {"title": "Privacy Policy", "detail": "See docs/PRIVACY_MCP.md"}
+
 @app.get("/status", tags=["Health Check"])
 async def get_status():
     """JSON status endpoint for programmatic access."""

@@ -9,6 +9,8 @@ Run with uvicorn, e.g.:
 """
 
 from mcp_server import mcp
+from starlette.responses import FileResponse, JSONResponse
+import os
 
 # Ensure the HTTP transport expects the handshake at "/" (trailing slash supported).
 try:
@@ -18,3 +20,16 @@ except Exception:
 
 # Build the ASGI sub-application that implements the MCP Streamable HTTP transport.
 app = mcp.streamable_http_app()
+
+# Lightweight /privacy route when this app is deployed standalone
+async def privacy(request):  # type: ignore[override]
+  path = "static/privacy-mcp.html"
+  if os.path.exists(path):
+    return FileResponse(path, media_type="text/html")
+  return JSONResponse({"title": "Privacy Policy", "detail": "See docs/PRIVACY_MCP.md"})
+
+try:
+  app.add_route("/privacy", privacy, methods=["GET"])  # type: ignore[attr-defined]
+except Exception:
+  # If add_route isn't available, ignore; privacy page is optional
+  pass
