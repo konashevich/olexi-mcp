@@ -1,9 +1,44 @@
-# Olexi AI — Law & Technology Research Server (MCP-native)
+# OLEXI Australian Laws MCP Server (OLEXI-MCP)
 
-Version: 3.4  
+Version: 3.4
 Date: 13 August 2025
 
-Olexi AI is a research project at the intersection of Law and Technology. It pairs a Chrome extension with a Python backend to orchestrate rigorous, transparent legal search on AustLII, then synthesises results in clear, British English. The backend is built as a Model Context Protocol (MCP) server for tool execution, with planning and reasoning performed by the host (not the MCP server). This separation ensures auditability, security, and faithful sourcing.
+OLEXI-MCP is a research project by Dr Oleksii Konashevych at the intersection of law and technology. It’s a Model Context Protocol (MCP) server that searches AustLII (www.austlii.edu.au) — the free, online database of Australian legal information (legislation and case law).
+
+OLEXI-MCP is a free tool that lets your AI chat agent search across Australian laws. It works with any MCP-capable host, including:
+
+- ChatGPT (via Connectors) — quick overview: https://youtu.be/WLWbtkJqq8I?si=MR8_HskYOuhUEEY0
+- Claude by Anthropic
+- VS Code + GitHub Copilot
+- Any other MCP-supporting app
+- OLEXI Chrome extension for AustLII (coming soon)
+
+Once connected, you can ask legal questions and your AI won’t just guess — it’ll search AustLII and cite real legislation and case law, with links. In general-purpose chats (e.g., ChatGPT), you can nudge tool use by mentioning “Australian laws” or explicitly asking it to use the “OLEXI MCP” tool.
+
+For developers and researchers:
+
+Add manually to your own MCP host:
+
+```json
+{
+  "mcpServers": {
+    "austlii": {
+      "transport": {
+        "type": "http",
+        "url": "https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/"
+      }
+    }
+  }
+}
+```
+
+- The MCP tool is open source — git clone and enjoy
+- Docker image is available — no hassle
+- Or use the hosted endpoint: https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/
+
+
+
+Fun’s over — boring technical stuff:
 
 Why MCP and host-led reasoning
 - Separation of concerns: the MCP server provides tools (search, URL builder) only; the host agent plans queries and writes the summary. This prevents “black-box” scraping and keeps logic inspectable.
