@@ -5,20 +5,14 @@ from fastapi import Depends, HTTPException, Security
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-from austlii_scraper import search_austlii, check_austlii_health, AustliiUnavailableError
-# Defer AI imports so server can start even if AI key is missing
-try:
-    from mcp_handler import generate_search_plan, summarize_results  # type: ignore
-    AI_AVAILABLE = True
-except Exception as _ai_err:
-    generate_search_plan = None  # type: ignore
-    summarize_results = None  # type: ignore
-    AI_AVAILABLE = False
+from fastapi.responses import FileResponse, StreamingResponse
+from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
+from austlii_scraper import check_austlii_health
+from host_agent import HOST_AI  # host-side agent (uses its own AI key)
 from database_map import DATABASE_TOOLS_LIST
 import urllib.parse # To help build the final search URL
 import os
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 import contextlib
 import asyncio
 import time
@@ -28,6 +22,11 @@ import logging
 import json
 from logging.handlers import RotatingFileHandler
 from contextlib import AsyncExitStack
+from fastapi import Request
+
+# MCP client (as a host) for connecting to our own MCP server over Streamable HTTP
+from mcp import ClientSession
+from mcp.client.streamable_http import streamablehttp_client
 from collections import deque
 from typing import Deque
 
@@ -45,6 +44,9 @@ app = FastAPI(
     description="Backend server for the Olexi AI browser extension.",
     version="1.0.0",
 )
+
+# Respect X-Forwarded-* headers from Cloud Run / proxies to avoid incorrect http→https redirects
+app.add_middleware(ProxyHeadersMiddleware)
 # Load API keys for extension and manual clients
 API_KEY_NAME = "X-API-Key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
@@ -216,7 +218,7 @@ AUSTLII_STATUS: Dict[str, Optional[object]] = {
 from typing import Union, cast
 
 # Monitoring configuration (env-overridable)
-AUSTLII_POLL_INTERVAL: int = int(os.getenv("AUSTLII_POLL_INTERVAL", "60"))
+AUSTLII_POLL_INTERVAL: int = int(os.getenv("AUSTLII_POLL_INTERVAL", "90"))
 AUSTLII_MONITOR_LOG: str = os.getenv("AUSTLII_MONITOR_LOG", "austlii_monitoring.txt")
 AUSTLII_LOG_MAX_BYTES: int = int(os.getenv("AUSTLII_LOG_MAX_BYTES", "2097152"))
 AUSTLII_LOG_BACKUPS: int = int(os.getenv("AUSTLII_LOG_BACKUPS", "5"))
@@ -371,7 +373,7 @@ def _snapshot(cached: bool) -> Dict[str, object]:
         "current_downtime": _current_downtime(),
     }
 
-def do_probe(source: str = "probe", timeout: int = 3, interval_s: int = 0) -> Dict[str, object]:
+def do_probe(source: str = "probe", timeout: int = 5, interval_s: int = 0) -> Dict[str, object]:
     start = time.perf_counter()
     ok, code, err = check_austlii_health(timeout=timeout)
     latency_ms = int((time.perf_counter() - start) * 1000)
@@ -379,7 +381,7 @@ def do_probe(source: str = "probe", timeout: int = 3, interval_s: int = 0) -> Di
     _record_probe(now, ok, code, err, latency_ms, source, interval_s)
     return _snapshot(cached=False)
 
-async def _poll_austlii_health(interval: int = 60) -> None:
+async def _poll_austlii_health(interval: int = 90) -> None:
     while True:
         try:
             do_probe(source="poll", timeout=3, interval_s=interval)
@@ -487,90 +489,20 @@ async def get_status():
         "status": "Olexi AI server is running",
         "port": 3000,
         "databases": len(DATABASE_TOOLS_LIST),
-    "mcp": bool(olexi_mcp),
-    "ai": { "available": bool(AI_AVAILABLE) },
+        "mcp": bool(olexi_mcp),
+        "ai": { "available": bool(getattr(HOST_AI, 'available', False)) },
         "austlii": status_obj,
     }
 
 ## Legacy chat endpoint removed (non-MCP). Use /api/tools/* instead.
 
-# ==============================
-# MCP Tools Bridge (REST Facade)
-# ==============================
-
-class PlanRequest(BaseModel):
-    prompt: str
-
-class PlanResponse(BaseModel):
-    query: str
-    databases: List[str]
-
-class SearchRequest(BaseModel):
-    query: str
-    databases: List[str]
-
-class SummaryRequest(BaseModel):
-    prompt: str
-    results: List[Dict]
-
-class SummaryResponse(BaseModel):
-    markdown: str
-
-class BuildUrlRequest(BaseModel):
-    query: str
-    databases: List[str]
-
-class BuildUrlResponse(BaseModel):
-    url: str
-
-@app.get("/api/tools/databases", tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
-async def tools_databases(api_key: str = Depends(get_api_key)) -> List[Dict]:
-    """Return all available AustLII databases (mirrors list_databases tool)."""
-    return DATABASE_TOOLS_LIST
-
-@app.post("/api/tools/plan_search", response_model=PlanResponse, tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
-async def tools_plan_search(req: PlanRequest, api_key: str = Depends(get_api_key)) -> PlanResponse:
-    # Upfront AustLII gate: planning is pointless if the source is down
-    cached = AUSTLII_STATUS
-    stale = (time.time() - _as_float(cast(Union[int, float, str, None], cached.get("checked_at")))) > 120
-    if cached.get("ok") is False or stale:
-        ok, code, err = check_austlii_health(timeout=3)
-        if not ok:
-            from fastapi import HTTPException
-            raise HTTPException(status_code=503, detail=f"AustLII is not accessible (status {code}). {err}")
-    if not AI_AVAILABLE or generate_search_plan is None:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=503, detail="AI is not accessible. Configure API keys and try again.")
-    sp = generate_search_plan(req.prompt, DATABASE_TOOLS_LIST)
-    return PlanResponse(query=sp.get("query", req.prompt), databases=sp.get("databases", []))
-
-@app.post("/api/tools/search_austlii", tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
-async def tools_search_austlii(req: SearchRequest, api_key: str = Depends(get_api_key)) -> List[Dict]:
-    # Upfront AustLII gate
-    cached = AUSTLII_STATUS
-    stale = (time.time() - _as_float(cast(Union[int, float, str, None], cached.get("checked_at")))) > 120
-    if cached.get("ok") is False or stale:
-        ok, code, err = check_austlii_health(timeout=3)
-        if not ok:
-            from fastapi import HTTPException
-            raise HTTPException(status_code=503, detail=f"AustLII is not accessible (status {code}). {err}")
-    try:
-        results = search_austlii(req.query, req.databases)
-    except AustliiUnavailableError as e:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=503, detail=f"AustLII is not accessible: {e}")
-    # Convert to primitive dicts
-    out: List[Dict] = []
-    for item in results:
-        out.append({"title": item.title, "url": str(item.url), "metadata": item.metadata})
-    return out
-
-# Dedicated health and uptime endpoints for AustLII
+## Dedicated health and uptime endpoints for AustLII
 @app.get("/austlii/health", tags=["Health Check"])
 async def austlii_health(live: bool = False):
     """Return AustLII health; use cached value unless live=true to probe now. Includes uptime and counters."""
     if live or not AUSTLII_STATUS.get("checked_at"):
-        return do_probe(source="probe", timeout=3)
+        health_timeout = int(os.getenv("AUSTLII_HEALTH_TIMEOUT", "6"))
+        return do_probe(source="probe", timeout=health_timeout)
     return _snapshot(cached=True)
 
 @app.post("/austlii/health/probe", tags=["Health Check"])
@@ -588,18 +520,264 @@ async def austlii_uptime():
         "current_downtime": snap.get("current_downtime"),
     }
 
-@app.post("/api/tools/summarize_results", response_model=SummaryResponse, tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
-async def tools_summarize_results(req: SummaryRequest, api_key: str = Depends(get_api_key)) -> SummaryResponse:
-    if not AI_AVAILABLE or summarize_results is None:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=503, detail="AI is not accessible. Configure API keys and try again.")
-    md = summarize_results(req.prompt, req.results)
-    return SummaryResponse(markdown=md)
+## Research session (SSE): plan → MCP search_with_progress → summarize → build URL
+class ResearchRequest(BaseModel):
+    prompt: str
+    maxResults: int = 25
+    maxDatabases: int = 5
+    yearFrom: Optional[int] = None
+    yearTo: Optional[int] = None
 
-@app.post("/api/tools/build_search_url", response_model=BuildUrlResponse, tags=["MCP Tools Bridge"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
-async def tools_build_search_url(req: BuildUrlRequest, api_key: str = Depends(get_api_key)) -> BuildUrlResponse:
-    params = [("query", req.query), ("method", "boolean"), ("meta", "/au")]
-    for db_code in req.databases:
-        params.append(("mask_path", db_code))
-    url = f"https://www.austlii.edu.au/cgi-bin/sinosrch.cgi?{urllib.parse.urlencode(params)}"
-    return BuildUrlResponse(url=url)
+def _build_austlii_url(query: str, dbs: List[str]) -> str:
+    params = [("query", query), ("method", "boolean"), ("meta", "/au")]
+    for code in dbs:
+        params.append(("mask_path", code))
+    return f"https://www.austlii.edu.au/cgi-bin/sinosrch.cgi?{urllib.parse.urlencode(params)}"
+
+@app.post("/session/research", tags=["Sessions"], dependencies=[Depends(verify_extension_origin), Depends(rate_limit)])
+async def session_research(req: ResearchRequest, request: Request, api_key: str = Depends(get_api_key)):
+    """Start a research session that streams progress and a final answer via SSE."""
+
+    async def event_stream():
+        # Health gate first (soft fail): if live probe times out, continue with a warning
+        cached = AUSTLII_STATUS
+        stale = (time.time() - _as_float(cast(Union[int, float, str, None], cached.get("checked_at")))) > 120
+        if cached.get("ok") is False or stale:
+            health_timeout = int(os.getenv("AUSTLII_HEALTH_TIMEOUT", "6"))
+            ok, code, err = check_austlii_health(timeout=health_timeout)
+            if not ok:
+                warn = {
+                    'stage': 'planning',
+                    'message': f'AustLII health probe failed (status {code}): {err}. Proceeding anyway.'
+                }
+                yield f"event: progress\ndata: {json.dumps(warn)}\n\n"
+
+        if not getattr(HOST_AI, "available", False):
+            yield f"event: error\ndata: {json.dumps({'code':'HOST_AI_UNAVAILABLE','detail':'Configure HOST_GOOGLE_API_KEY'})}\n\n"
+            return
+
+        # Plan
+        yield f"event: progress\ndata: {json.dumps({'stage':'planning','message':'Planning search'})}\n\n"
+        try:
+            plan = HOST_AI.plan_search(req.prompt, DATABASE_TOOLS_LIST, max_dbs=max(req.maxDatabases, 1))
+        except Exception as e:
+            yield f"event: error\ndata: {json.dumps({'code':'PLANNING_FAILED','detail':str(e)})}\n\n"
+            return
+        query = plan.get("query", req.prompt)
+        dbs: List[str] = list(plan.get("databases", []))[: req.maxDatabases]
+        if not dbs:
+            dbs = ["au/cases/cth/HCA", "au/cases/cth/FCA"]
+
+        # Announce planned query
+        yield f"event: progress\ndata: {json.dumps({'stage':'planning','message':'Planned query','query': query, 'databases': dbs})}\n\n"
+
+        # Decide search method adaptively: use auto for vague prompts, boolean for scoped
+        def _is_vague(p: str) -> bool:
+            p = (p or "").lower()
+            # vague if very short or lacks any clear scoping hints
+            if len(p.split()) <= 3:
+                return True
+            hints = ["hca", "fca", "nsw", "vic", "qld", "tribunal", "since ", "after ", "before ", "between ", "[20", "(20"]
+            return not any(h in p for h in hints)
+
+        method = "auto" if _is_vague(req.prompt) else "boolean"
+        yield f"event: progress\ndata: {json.dumps({'stage':'planning','message':'Adaptive mode selected','method': method})}\n\n"
+
+        # Connect to MCP over Streamable HTTP and stream progress via a queue
+        # In container platforms (e.g., Cloud Run) the service listens on $PORT; default to that for local loopback.
+        _port = os.getenv("PORT", "3000")
+        mcp_url = os.getenv("MCP_URL", f"http://127.0.0.1:{_port}/mcp")
+        try:
+            from asyncio import Queue
+            queue: Queue[str] = Queue()
+            result_holder: Dict[str, Any] = {}
+
+            async def run_tool_call():
+                try:
+                    async with streamablehttp_client(mcp_url) as (read, write, _):
+                        async with ClientSession(read, write) as session:
+                            await session.initialize()
+
+                            async def on_progress(progress: float, total: Optional[float], message: Optional[str]):
+                                evt = {"stage": "search", "pct": progress, "message": message}
+                                await queue.put(f"event: progress\ndata: {json.dumps(evt)}\n\n")
+
+                            res = await session.call_tool(
+                                "search_with_progress",
+                                {"query": query, "databases": dbs, "method": method},
+                                progress_callback=on_progress,
+                            )
+                            result_holder["result"] = res
+                except Exception as e:
+                    result_holder["error"] = e
+                finally:
+                    await queue.put("__DONE__")
+
+            task = asyncio.create_task(run_tool_call())
+
+            # Drain queue and yield events as they arrive
+            while True:
+                msg = await queue.get()
+                if msg == "__DONE__":
+                    break
+                await asyncio.sleep(0)  # cooperative yield
+                yield msg
+
+            # Handle result or error
+            if "error" in result_holder:
+                raise result_holder["error"]  # type: ignore[misc]
+
+            result: Any = result_holder.get("result")
+            # Parse results (structuredContent or content fallback)
+            items_list: List[Dict] = []
+            if result is not None and hasattr(result, "structuredContent") and getattr(result, "structuredContent", None):
+                sc = getattr(result, "structuredContent", None)
+                if isinstance(sc, list):
+                    items_list = sc  # type: ignore[assignment]
+                elif isinstance(sc, dict) and isinstance(sc.get("result"), list):
+                    items_list = sc.get("result")  # type: ignore[assignment]
+            if result is not None:
+                # Parse any text blocks; handle either a raw list or an object with key "result"
+                for c in getattr(result, "content", []) or []:
+                    try:
+                        raw = getattr(c, "text", "") or ""
+                        if not raw:
+                            continue
+                        obj = json.loads(raw)
+                        if isinstance(obj, list):
+                            if not items_list:
+                                items_list = obj
+                        elif isinstance(obj, dict) and isinstance(obj.get("result"), list):
+                            if not items_list:
+                                items_list = obj.get("result")  # type: ignore[assignment]
+                    except Exception:
+                        # ignore partial or non-JSON chunks
+                        continue
+
+            # Optional year filtering from item titles (e.g., [2024] ... or (D Month 2024))
+            def _extract_year(title: str) -> Optional[int]:
+                import re as _re
+                m = _re.search(r"\[(\d{4})]", title)
+                if m:
+                    return int(m.group(1))
+                m2 = _re.search(r"\((?:\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})\)", title)
+                if m2:
+                    return int(m2.group(2))
+                return None
+
+            unfiltered = items_list if isinstance(items_list, list) else []
+            filtered: List[Dict] = []
+            y_from = req.yearFrom
+            y_to = req.yearTo
+            if unfiltered and (y_from or y_to):
+                for it in unfiltered:
+                    t = str(it.get('title') or '')
+                    y = _extract_year(t)
+                    if y is None:
+                        continue
+                    if y_from and y < y_from:
+                        continue
+                    if y_to and y > y_to:
+                        continue
+                    filtered.append(it)
+            else:
+                filtered = unfiltered
+
+            # Optional lexical stoplist filter for obvious noise (domain-agnostic, configurable)
+            stoplist = set((os.getenv("PREVIEW_STOPLIST", "").lower().split(",") if os.getenv("PREVIEW_STOPLIST") else []))
+            if stoplist:
+                tmp: List[Dict] = []
+                for it in filtered:
+                    t = str(it.get('title') or '').lower()
+                    if any(w and w in t for w in stoplist):
+                        continue
+                    tmp.append(it)
+                filtered = tmp
+
+            # Fallback: if still empty, try a broadened query once or switch method
+            attempted_fallback = False
+            if not filtered:
+                # notify fallback
+                yield f"event: progress\ndata: {json.dumps({'stage':'search','message':'No items after filter; broadening query'})}\n\n"
+                attempted_fallback = True
+                broad = query
+                # heuristic: replace AND with OR, remove exact quotes around long phrases
+                broad = broad.replace(' AND ', ' OR ').replace(' and ', ' or ')
+                broad = broad.replace('"', '')
+                # call tool again; if initial was boolean, try auto; if auto, try titles-only boolean
+                next_method = "auto" if method == "boolean" else ("title" if method == "auto" else "boolean")
+                async with streamablehttp_client(mcp_url) as (read, write, _):
+                    async with ClientSession(read, write) as session:
+                        await session.initialize()
+                        fb_res: Any = await session.call_tool(
+                            "search_austlii",
+                            {"query": broad, "databases": dbs, "method": next_method},
+                        )
+                        # fb_res returns as structured JSON in content
+                        fb_items: List[Dict] = []
+                        if hasattr(fb_res, "structuredContent") and getattr(fb_res, "structuredContent", None):
+                            sc = getattr(fb_res, "structuredContent")
+                            if isinstance(sc, list):
+                                fb_items = sc
+                        if not fb_items:
+                            for c in getattr(fb_res, "content", []) or []:
+                                try:
+                                    raw = getattr(c, 'text', '') or ''
+                                    obj = json.loads(raw)
+                                    if isinstance(obj, list):
+                                        fb_items = obj
+                                        break
+                                except Exception:
+                                    continue
+                        # apply year filter again if set
+                        use_items = fb_items
+                        if use_items and (y_from or y_to):
+                            tmp: List[Dict] = []
+                            for it in use_items:
+                                t = str(it.get('title') or '')
+                                y = _extract_year(t)
+                                if y is None:
+                                    continue
+                                if y_from and y < y_from:
+                                    continue
+                                if y_to and y > y_to:
+                                    continue
+                                tmp.append(it)
+                            use_items = tmp
+                        filtered = use_items
+                        # Announce fallback query
+                        yield f"event: progress\ndata: {json.dumps({'stage':'search','message':'Fallback query used','query': broad,'method': next_method, 'count': len(filtered)})}\n\n"
+
+            # prepare preview
+            preview_items: List[Dict] = filtered[: max(1, min(10, req.maxResults))]
+            yield f"event: results_preview\ndata: {json.dumps({'items': preview_items, 'total_unfiltered': len(unfiltered), 'total_filtered': len(filtered), 'fallback': attempted_fallback})}\n\n"
+
+            # Build URL via tool
+            async with streamablehttp_client(mcp_url) as (read, write, _):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    url_res: Any = await session.call_tool("build_search_url", {"query": query, "databases": dbs})
+                    share_url = None  # type: Optional[str]
+                    if hasattr(url_res, "structuredContent") and getattr(url_res, "structuredContent", None):
+                        sc = getattr(url_res, "structuredContent")
+                        share_url = sc if isinstance(sc, str) else None
+                    if not share_url:
+                        for c in getattr(url_res, "content", []) or []:
+                            if getattr(c, "type", "") == "text":
+                                share_url = getattr(c, "text", None)
+                                break
+
+        except Exception as e:
+            yield f"event: error\ndata: {json.dumps({'code':'MCP_ERROR','detail':str(e)})}\n\n"
+            return
+
+        # Summarize (host-only)
+        try:
+            markdown = HOST_AI.summarize(req.prompt, preview_items)
+        except Exception as e:
+            yield f"event: error\ndata: {json.dumps({'code':'SUMMARIZE_FAILED','detail':str(e)})}\n\n"
+            return
+
+        yield f"event: answer\ndata: {json.dumps({'markdown': markdown, 'url': share_url or _build_austlii_url(query, dbs)})}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

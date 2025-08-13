@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# VCS
+.git
+.gitignore
+
+# Local env
+.venv/
+.env
+
+# Logs and old artifacts
+*.log
+old/
+
+# OS/editor
+.DS_Store
+*.swp
+*.swo
+.vscode/

@@ -52,7 +52,7 @@ def list_databases() -> List[Dict]:
     return DATABASE_TOOLS_LIST
 
 @mcp.tool(title="Search AustLII")
-def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
+def search_austlii(query: str, databases: List[str], method: str = "boolean") -> List[SearchResultItem]:
     """Search Australian legal databases for cases, legislation, and legal documents.
     
     Performs comprehensive legal research across selected database codes. Returns 
@@ -72,7 +72,7 @@ def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
     Best for: Case law research, statutory interpretation, legal precedent analysis,
     citation verification, and comprehensive legal document discovery.
     """
-    results = scrape(query, databases)
+    results = scrape(query, databases, method=method)
     # Convert to primitive dicts then model to ensure str URLs
     output: List[SearchResultItem] = []
     for item in results:
@@ -106,7 +106,7 @@ def build_search_url(query: str, databases: List[str]) -> str:
 
 # --- Optional: progress example for long scrapes ---
 @mcp.tool(title="Search with Progress")
-async def search_with_progress(query: str, databases: List[str], ctx: Context) -> List[SearchResultItem]:
+async def search_with_progress(query: str, databases: List[str], ctx: Context, method: str = "boolean") -> List[SearchResultItem]:
     """Search Australian legal databases with real-time progress updates.
     
     Identical functionality to search_austlii but provides status updates during 
@@ -130,7 +130,7 @@ async def search_with_progress(query: str, databases: List[str], ctx: Context) -
     """
     await ctx.info("Starting AustLII search...")
     await ctx.report_progress(0.3, total=1.0, message="Scraping")
-    results = scrape(query, databases)
+    results = scrape(query, databases, method=method)
     await ctx.report_progress(0.9, total=1.0, message="Packaging")
     out: List[SearchResultItem] = []
     for item in results:
@@ -150,6 +150,19 @@ async def mcp_info(request: Request):  # type: ignore[override]
         "health": "/mcp/health",
         "transport": "streamable-http",
         "hint": "Your MCP host should POST to /mcp for the protocol handshake."
+    })
+
+# Some MCP hosts may probe the base path with GET before starting the POST handshake.
+# Provide a friendly JSON response on GET "/" to avoid 400s from the transport layer.
+@mcp.custom_route("/", methods=["GET"], include_in_schema=False)
+async def mcp_root_get(request: Request):  # type: ignore[override]
+    return JSONResponse({
+        "status": "ok",
+        "name": mcp.name,
+        "transport": "streamable-http",
+        "health": "/mcp/health",
+        "info": "/mcp/info",
+        "hint": "Use POST to /mcp/ for MCP session handshake; avoid redirects by including the trailing slash."
     })
 
 # --- Entry point for stdio/CLI ---

@@ -52,3 +52,9 @@
 - Audit MCP server endpoints to confirm no AI/LLM exposure.
 - Update documentation and provide sample agent workflows.
 - Review and test for strict resource isolation and correct agent behavior.
+
+## 6. Status Update (implemented)
+- Chrome Extension redesigned: agent-led, MCP-only tool usage (databases, search, build URL). No server-side AI calls.
+- Legacy orchestration removed from the extension; no commented-out code left. Test page deprecated and emptied.
+- Basic database selector UI added and heuristic auto-selection when none chosen.
+- Isolation preserved: extension acts as MCP host; MCP server remains data/tools only.

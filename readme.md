@@ -1,78 +1,64 @@
-# Olexi AI — MCP Hybrid Server and Extension (AI-only)
+# Olexi AI — Law & Technology Research Server (MCP-native)
 
-Version: 3.3  
-Date: 11 August 2025
+Version: 3.4  
+Date: 13 August 2025
 
-Olexi AI is a browser extension and Python backend that orchestrate AI-driven legal research on AustLII. The system is strictly AI-only: when AI is not accessible, AI-dependent endpoints return 503 and the extension informs the user—no fabricated results and no legacy non-AI fallbacks.
+Olexi AI is a research project at the intersection of Law and Technology. It pairs a Chrome extension with a Python backend to orchestrate rigorous, transparent legal search on AustLII, then synthesises results in clear, British English. The backend is built as a Model Context Protocol (MCP) server for tool execution, with planning and reasoning performed by the host (not the MCP server). This separation ensures auditability, security, and faithful sourcing.
 
-## What’s in this repo
-- FastAPI server exposing:
-  - MCP Tools Bridge (REST): `/api/tools/*` (AI required for plan/summarize; gated by auth)
-  - MCP server (Streamable HTTP) mounted at `/mcp` (tool-only: no AI)
-  - Health and uptime endpoints for AustLII
-  - Static assets and `/status`
-- Browser extension (MV3) under `olexi-extension/`
-- Scraper for AustLII’s CGI endpoint
-- AI handlers using Google Gemini
+Why MCP and host-led reasoning
+- Separation of concerns: the MCP server provides tools (search, URL builder) only; the host agent plans queries and writes the summary. This prevents “black-box” scraping and keeps logic inspectable.
+- Portability: any MCP-capable host (VS Code, browsers, services) can orchestrate the same tools.
+- Safety and least-privilege: the tool-only server holds no AI keys; the host owns AI usage and policy.
+
+What makes AustLII different (methodology and findings)
+The AustLII search stack is a legacy CGI system with subtle constraints. We validated the following through careful experimentation:
+- The true endpoint is the CGI script: https://www.austlii.edu.au/cgi-bin/sinosrch.cgi. “Modern” paths like /search/ return 410 and are unsuitable for programmatic queries.
+- Requests must look like a real browser. At minimum include:
+  - User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+  - Referer: https://www.austlii.edu.au/forms/search1.html
+- Multiple database filters require repeating the key: use mask_path=… once per database; don’t comma-join.
+- Parsing needs precision. Results live under div.card and each item is li.multi; naïve list scraping grabs UI tabs instead of cases.
+- Database codes follow a stable taxonomy: au/[type]/[jurisdiction]/[court_code] (for example au/cases/cth/HCA, au/cases/nsw/NSWSC). See database_map.py for coverage.
+
+Research framing: disciplined legal search, not fuzzy browsing
+- Query planning enforces grouped ORs, avoids brittle date operators, and sanitises unsafe patterns before execution.
+- Adaptive search modes: use method=auto for broad or vague prompts; prefer boolean (and sometimes titles-only) when scope is clear; switch modes automatically on empty previews.
+- Host-side filters: optional year-from/to extraction from titles (e.g., [2024] …) and a configurable stop-list to reduce preview noise.
+- Resilience: timeouts, retries, and back-off are environment-configurable; health probes are soft-gated to keep research flowing.
+
+## System architecture (high level)
+
+Extension (UI) → Host-led SSE session → MCP tool calls → AustLII → Preview → Host summary
+
+- Browser extension: captures a natural-language prompt and streams a research session via Server-Sent Events (SSE).
+- Host agent (server-side):
+  1) Plans the AustLII query + database set; 2) invokes MCP tools; 3) applies filters/fallbacks; 4) produces a concise summary plus follow-up questions.
+- MCP server (tool-only; mounted at /mcp): search_austlii, search_with_progress, build_search_url.
+- Scraper: performs the CGI request with required headers and parses div.card > li.multi.
 
 ## Endpoints
-- GET `/status` — JSON status (AI availability, AustLII health snapshot)
-- MCP Tools Bridge (REST facade):
-  - GET  `/api/tools/databases`
-  - POST `/api/tools/plan_search`        (AI; 503 if AI unavailable)
-  - POST `/api/tools/search_austlii`
-  - POST `/api/tools/summarize_results`  (AI; 503 if AI unavailable)
-  - POST `/api/tools/build_search_url`
+- GET `/status` — JSON status (AI availability, MCP presence, and AustLII health snapshot)
+- SSE research session (host-led):
+  - POST `/session/research` — streams planning → MCP search_with_progress → preview → summary
 - MCP server (Streamable HTTP): mounted at `/mcp`
-  - GET `/mcp/health` — basic OK JSON
-  - Use a host (e.g., VS Code Continue) to connect to `/mcp`
+  - Connect a compatible host to use the tools (list_databases, search_austlii, build_search_url)
 - AustLII health:
-  - GET  `/austlii/health` — health + uptime summary (use `?live=true` to force probe)
+  - GET `/austlii/health` — health + uptime summary (use `?live=true` to probe now)
   - POST `/austlii/health/probe` — immediate probe
-  - GET  `/austlii/uptime` — uptime/counters only
+  - GET `/austlii/uptime` — uptime windows and counters only
 
-## Authentication
+## Authentication and rate limits
+- Development (local): API key in header `X-API-Key`, validated against EXTENSION_API_KEYS or client_api_keys.txt. Optional extension ID and origin checks.
+- Production: extension keys only; strict origin/ID/UA checks; per-key daily caps and anti-sharing heuristics.
 
-Production (silent, no user prompts)
-- The published extension auto-authorizes on first use (no copy/paste keys).
-- Flow (server-side endpoints):
-  - POST `/auth/provision` — extension sends its store ID, device_id, and a DPoP public key; server validates Origin (chrome-extension://<store-id>) and issues short-lived access_token (JWT, ~10 min) + refresh_token (~30 days) bound to that key.
-  - POST `/auth/token` (grant_type=refresh_token) — refresh access tokens silently.
-  - GET `/.well-known/jwks.json` — public signing keys (RS/ES).
-- Tokens are bound to the device key (DPoP) and the store ID origin. Users do nothing.
+Environment variables (selected)
+- EXTENSION_API_KEYS, EXTENSION_IDS, EXTENSION_ALLOWED_ORIGINS, EXTENSION_UA_PREFIX
+- RATE_LIMIT_PER_DAY (default 50), MAX_DISTINCT_IPS (default 10)
+- AUSTLII_POLL_INTERVAL, AUSTLII_HEALTH_TIMEOUT
+- AUSTLII_TIMEOUT, AUSTLII_RETRIES, AUSTLII_BACKOFF
+- PREVIEW_STOPLIST (optional, comma-separated terms)
 
-Development (local)
-- Keep simple API-key auth enabled for fast local runs.
-- Requirements:
-  - Header: `X-API-Key: <value from EXTENSION_API_KEYS or extension_api_keys.txt>`
-  - Extension ID pinning:
-    - Strict: set `EXTENSION_IDS="<your-dev-extension-id>"` (from chrome://extensions).
-    - Easy: set `EXTENSION_IDS=""` to disable the ID check locally.
-- Restart the server after .env changes:
-  - `uvicorn main:app --reload --port 3000 --env-file .env`
-
-Environment variables (auth & limits)
-- `EXTENSION_API_KEYS` — comma-separated dev keys (local-only)
-- `EXTENSION_IDS` — comma-separated allowed extension IDs (dev/prod)
-- `OLEXI_DAILY_LIMIT` — default 50 requests/day per subject (device_id or API key)
-- `OLEXI_MAX_DISTINCT_IPS` — anti-sharing heuristic (default 10/day)
-- Optional (when provisioning is enabled):  
-  `OLEXI_REQUIRE_DPOP=true`  
-  `OLEXI_TOKEN_TTL=600`  
-  `OLEXI_REFRESH_TTL=2592000`  
-  `OLEXI_OAUTH_ISSUER=olexi-server`  
-  `OLEXI_OAUTH_AUDIENCE=olexi-extension`
-
-Rate limits & anti-cheat
-- Hard daily cap: 50 requests/day per device_id (or API key in dev).
-- Heuristics: block if too many distinct IPs per day; burst limits applied.
-- Only your extension origin is accepted in production; others require manual admin-issued credentials.
-
-Admin (manual non-extension clients)
-- Manage client keys/tokens via admin endpoints (if enabled), protected by `ADMIN_API_KEY`.
-- These clients are rate-limited and can be revoked independently.
-
-## Setup
+## Setup (local)
 
 Prerequisites: Python 3.12+
 
@@ -81,9 +67,6 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 echo 'GOOGLE_API_KEY=your_gemini_api_key_here' >> .env
-# Optional dev auth:
-# echo 'EXTENSION_API_KEYS=your_dev_key' >> .env
-# echo 'EXTENSION_IDS=' >> .env   # disable ID check locally
 uvicorn main:app --reload --port 3000 --env-file .env
 ```
 
@@ -91,34 +74,27 @@ Quick checks
 ```bash
 curl -s http://127.0.0.1:3000/status | jq
 curl -s http://127.0.0.1:3000/austlii/health | jq
-curl -s -H "X-API-Key: <dev_key>" http://127.0.0.1:3000/api/tools/databases | jq
 ```
 
 ## MCP usage (tool-only)
-- Add to your VS Code MCP host (e.g., Continue):
-```json
-{
-  "mcpServers": {
-    "austlii": {
-      "transport": { "type": "http", "url": "http://127.0.0.1:3000/mcp" }
-    }
-  }
-}
-```
-- Tools available: `list_databases`, `search_austlii`, `build_search_url`. Planning/summarization must be done by the host’s AI (e.g., Copilot).
+- Configure a host (e.g., VS Code Continue) to connect to `/mcp` over HTTP transport. Tools: `list_databases`, `search_austlii`, `search_with_progress`, `build_search_url`.
+- Planning and summarisation remain in the host; this server never embeds an AI model.
 
-## AustLII health monitoring and uptime
-- Rotating JSONL logs: `austlii_monitoring.txt`
-- Log schema (per line): `{ ts, ok, status, error, latency_ms, source, interval_s }`
-- In-memory uptime windows: `last_5m`, `last_1h`, `last_24h`, `last_7d`, `since_start`
-- Endpoints:
-  - GET `/austlii/health` (use `?live=true` to probe)
-  - POST `/austlii/health/probe`
-  - GET `/austlii/uptime`
+## AustLII mechanics (implementation notes)
+- CGI endpoint: `https://www.austlii.edu.au/cgi-bin/sinosrch.cgi`
+- Headers: strict User-Agent and Referer to mimic genuine browser traffic
+- Query parameters: `query`, `method` (boolean/auto/title), `meta` (`/au`); repeat `mask_path` per database
+- Parser: find `div.card`, then `li.multi` items; ignore sorting/navigation chrome
+- URL builder: repeat `mask_path` keys and percent-encode parameters
 
-## Security logs
-- JSONL audit: `security_events.log` — records notable auth/abuse events (e.g., rate_limited, bad_origin, too_many_ips).
+## Deployment
+- Dockerfile and Cloud Run ready (Container exposes `$PORT`, default 8080 in Cloud Run).
+- See `docs/deploy_cloud_run.md` for build, push, and deploy steps, and suggested environment configuration.
 
-## Notes
-- AI-only behavior: AI-dependent endpoints return 503 when AI is unavailable.
-- No legacy chat endpoint; use `/api/tools/*` or `/mcp`.
+## Ethics and respectful use
+- Respect AustLII’s infrastructure: moderate timeouts and retries; avoid aggressive scraping; include a real User-Agent.
+- Provide clear citations and a direct results URL for verification.
+- Maintain an audit trail of health checks and security events for accountability.
+
+## Acknowledgements
+This project builds upon AustLII’s open access to legal materials and the MCP ecosystem for structured tool orchestration. We aim to advance practical research methods in Law & Technology while respecting the systems and communities that make such research possible.

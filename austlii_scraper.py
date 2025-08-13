@@ -1,6 +1,7 @@
 # austlii_scraper.py (Final Production Version)
 
 import time
+import os
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -32,15 +33,16 @@ def check_austlii_health(timeout: int = 5) -> Tuple[bool, int, str]:
     except requests.RequestException as e:
         return (False, 0, str(e))
 
-def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
+def search_austlii(query: str, databases: List[str], method: str = "boolean") -> List[SearchResultItem]:
     """
     Performs a search on AustLII by sending a GET request with the necessary
     browser headers and parses the results based on the confirmed HTML structure.
     """
     
+    method = method if method in {"boolean", "auto", "title"} else "boolean"
     params = [
         ("query", query),
-        ("method", "boolean"),
+        ("method", method),
         ("meta", "/au")
     ]
     for db_code in databases:
@@ -53,20 +55,24 @@ def search_austlii(query: str, databases: List[str]) -> List[SearchResultItem]:
 
     print(f"Constructing request to AustLII with params: {params}")
 
-    # Simple retry (once) with small backoff for transient blips
+    # Simple retry with small backoff for transient blips (configurable)
     last_err: Optional[Exception] = None
     response: Optional[requests.Response] = None
-    for attempt in range(2):
+    retries = int(os.getenv("AUSTLII_RETRIES", "3"))
+    timeout = float(os.getenv("AUSTLII_TIMEOUT", "20"))
+    backoff = float(os.getenv("AUSTLII_BACKOFF", "1.5"))
+    for attempt in range(max(1, retries)):
         try:
-            response = requests.get(BASE_URL, params=params, headers=headers, timeout=15)
+            # Slightly longer timeout to handle AustLII slowness
+            response = requests.get(BASE_URL, params=params, headers=headers, timeout=timeout)
             print(f"AustLII response status code: {response.status_code}")
             response.raise_for_status()
             break
         except requests.RequestException as e:
             last_err = e
             print(f"Error fetching data from AustLII (attempt {attempt+1}): {e}")
-            if attempt == 0:
-                time.sleep(1.0)  # brief backoff
+            if attempt < max(1, retries) - 1:
+                time.sleep(backoff)  # brief backoff
             else:
                 raise AustliiUnavailableError(str(e))
 
