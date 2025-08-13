@@ -141,3 +141,6 @@ curl -s http://127.0.0.1:3000/austlii/health | jq
 
 ## Acknowledgements
 This project builds upon AustLII’s open access to legal materials and the MCP ecosystem for structured tool orchestration. We aim to advance practical research methods in Law & Technology while respecting the systems and communities that make such research possible.
+
+## License
+MIT — see the LICENSE file for details. If you prefer a permissive license with an explicit patent grant, consider Apache-2.0.
