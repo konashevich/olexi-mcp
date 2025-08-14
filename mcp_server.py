@@ -82,16 +82,17 @@ def search_austlii(query: str, databases: List[str], method: str = "boolean") ->
     return output
 
 @mcp.tool(title="Build Search URL")
-def build_search_url(query: str, databases: List[str]) -> str:
+def build_search_url(query: str, databases: List[str], method: str = "boolean") -> str:
     """Generate a direct URL to AustLII search results.
     
-    Takes the same query and databases as search_austlii but returns a web link 
+    Takes the same query, databases, and method as search_austlii but returns a web link 
     instead of parsed results. Use when users want to bookmark, share, or manually 
     browse the search results page. No network call is made by this tool.
     
     Args:
         query: Legal search terms (same format as search_austlii)
         databases: List of database codes to include in search scope
+        method: One of {"boolean", "auto", "title"}; determines upstream search behaviour
     
     Returns:
         Complete HTTPS URL to AustLII search results page for immediate browser access.
@@ -99,7 +100,8 @@ def build_search_url(query: str, databases: List[str]) -> str:
     Use when: Users need a shareable link, want to browse results manually, or 
     require direct access to the original search interface.
     """
-    params = [("query", query), ("method", "boolean"), ("meta", "/au")]
+    method = method if method in {"boolean", "auto", "title"} else "boolean"
+    params = [("query", query), ("method", method), ("meta", "/au")]
     for db_code in databases:
         params.append(("mask_path", db_code))
     return f"https://www.austlii.edu.au/cgi-bin/sinosrch.cgi?{urllib.parse.urlencode(params)}"

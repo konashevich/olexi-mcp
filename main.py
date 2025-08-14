@@ -763,7 +763,7 @@ async def session_research(req: ResearchRequest, request: Request, api_key: str 
             async with streamablehttp_client(mcp_url) as (read, write, _):
                 async with ClientSession(read, write) as session:
                     await session.initialize()
-                    url_res: Any = await session.call_tool("build_search_url", {"query": query, "databases": dbs})
+                    url_res: Any = await session.call_tool("build_search_url", {"query": query, "databases": dbs, "method": method})
                     share_url = None  # type: Optional[str]
                     if hasattr(url_res, "structuredContent") and getattr(url_res, "structuredContent", None):
                         sc = getattr(url_res, "structuredContent")

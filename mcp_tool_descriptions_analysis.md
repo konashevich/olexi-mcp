@@ -1,121 +1,98 @@
-# MCP Tool Descriptions Analysis for AI Agents
+# Olexi MCP Tools: Current Design and Interface Specification
 
-## Purpose
-This document analyzes what information AI agents actually need in tool descriptions to make effective decisions, avoiding unnecessary implementation details while providing sufficient context for intelligent tool selection and usage.
+## Abstract
+This document specifies the current Machine Context Protocol (MCP) interface of the Olexi legal research server. It formalizes the available resources and tools, their input and output contracts, selection guidance, and operational constraints. The intent is to enable reliable orchestration by AI agents and straightforward integration by host applications without exposing implementation internals.
 
-## Analysis Framework
+## System Overview
+The MCP server is implemented using `FastMCP` and exposes:
+- One structured resource for database discovery (`olexi://databases`).
+- Three primary tools for search workflow: `List Databases`, `Search AustLII`, and `Build Search URL`.
+- One optional long-running variant: `Search with Progress` (emits progress updates via MCP context).
 
-**AI Agent Needs:**
-1. **Purpose**: What does this tool accomplish?
-2. **Context**: When should this tool be used?
-3. **Inputs**: What parameters are expected and in what format?
-4. **Outputs**: What kind of results will be returned?
-5. **Scale/Scope**: How much data or what coverage to expect?
-6. **Limitations**: Any constraints or boundaries?
+Transport
+- Default: stdio (`mcp.run()`).
+- Optional: streamable HTTP when mounted; diagnostic endpoints include `/mcp/health`, `/mcp/info`, and `/mcp/` root. These are auxiliary and not required for MCP use.
 
-**AI Agent Does NOT Need:**
-- Implementation details (parsing strategies, HTTP headers, etc.)
-- Technical architecture decisions
-- Internal error handling mechanisms
-- Specific technology choices (BeautifulSoup, requests, etc.)
+Data Model
+- SearchResultItem: { title: string, url: string, metadata?: string }
 
----
+## Resource Catalog
 
-## Tool Design (current)
+### olexi://databases
+- Purpose: Provide the authoritative list of Australian legal databases (codes, names, descriptions) to inform search scope selection.
+- Output: JSON array of objects: { code: string, name: string, description: string }.
+- Typical usage: List first; select a subset of codes for subsequent tools.
 
-The following table reflects the current, AI-focused design of tool descriptions. It expresses purpose, inputs/outputs, when to choose a tool, and why this level of detail is sufficient for agents.
+## Tool Interface Specifications
 
-| Tool | AI-focused description | Inputs | Outputs | When to use | Why this is sufficient |
-|------|------------------------|--------|---------|-------------|------------------------|
-| list_databases | Get available Australian legal databases and their codes; use first to decide where to search. | none | { code, name, description }[] | Before searching, to select scope | Agents need options and codes; internals are irrelevant. |
-| search_austlii | Search Australian legal databases for cases, legislation, and related documents; returns structured results. | query: string (AND/OR/NOT), databases: string[] | { title, url, metadata? }[] | Case law research, precedent checks, statutory references | Enables correct tool selection and parameterization without exposing implementation. |
-| build_search_url | Generate a direct, shareable URL to the equivalent AustLII results. | query: string, databases: string[] | string (HTTPS URL) | Bookmark/share results or manual browsing | Clarifies alternative output (URL) and that it mirrors search inputs. |
-| search_with_progress | Same as search_austlii but emits progress updates for long-running queries. | query: string, databases: string[] | { title, url, metadata? }[] | Large scope searches or when UI needs progress | Distinguishes selection vs base search; no implementation detail required. |
+Each tool is described by its functional purpose, inputs, outputs, selection criteria, and constraints. Inputs and outputs are stable contracts intended for AI routing and host integration.
 
----
-
-## Design rationale (why we describe tools this way)
-
-1. Functional, not technical: Agents need to decide which tool to call and how—not how it’s implemented.
-2. Clear selection cues: Each tool states when to use it, improving routing and reducing trial-and-error.
-3. IO contracts: Minimal, explicit inputs/outputs prevent malformed calls and clarify expectations.
-4. Stable across refactors: Hiding internals avoids description churn when implementations change.
-5. UI clarity: Human users in IDEs see concise, meaningful summaries without noise.
-
----
-
-## Recommended Description Principles
-
-### DO Include:
-- ✅ **Functional purpose** (what it accomplishes)
-- ✅ **Use case scenarios** (when to choose this tool)
-- ✅ **Input requirements** (parameter types and formats)
-- ✅ **Output expectations** (result structure and scale)
-- ✅ **Selection criteria** (vs alternative tools)
-- ✅ **Practical constraints** (limitations relevant to usage decisions)
-
-### DON'T Include:
-- ❌ **Implementation details** (parsing strategies, HTTP methods)
-- ❌ **Technical architecture** (CGI endpoints, header requirements)
-- ❌ **Internal error handling** (fallback mechanisms, retry logic)
-- ❌ **Technology choices** (specific libraries, frameworks)
-- ❌ **Historical context** (why certain approaches were chosen)
-
----
-
-## Quality Metrics for AI-Focused Descriptions
-
-1. **Decision Clarity**: Can an AI agent determine when to use this tool?
-2. **Parameter Understanding**: Are input requirements clear and actionable?
-3. **Output Expectations**: Will the AI know what kind of results to expect?
-4. **Comparative Context**: Can the AI choose between similar tools?
-5. **Practical Constraints**: Are usage limitations relevant to decision-making clearly stated?
-
----
-
-## Next Steps
-
-1. Validate descriptions render clearly in client UIs (e.g., VS Code MCP panel).
-2. Observe agent tool selection; refine phrasing if consistent mis-selections occur.
-3. Keep descriptions stable; only adjust when behavior or IO contracts change.
-
----
-
-## Final AI-focused Descriptions (IO Contracts)
-
-These are the succinct descriptions an AI agent should rely on, including inputs/outputs and selection cues.
-
-### list_databases
-- Purpose: Get available Australian legal databases and their codes for research across courts, tribunals, and legislation. Use first to decide where to search.
+### List Databases
+- Purpose: Enumerate available Australian legal databases with codes and descriptions across courts, tribunals, and legislation.
 - Inputs: none
-- Outputs: Array of { code: string, name: string, description: string }
-- Selection: Pass selected codes into search_austlii/build_search_url
+- Outputs: Array<{ code: string, name: string, description: string }>
+- Selection: Use to determine the search scope before calling search tools.
 
-Example: N/A (no inputs)
+### Search AustLII
+- Purpose: Execute searches across one or more selected databases and return structured items for analysis, citation, or follow-up scraping.
+- Inputs:
+	- query: string (supports boolean operators AND, OR, NOT)
+	- databases: string[] (database codes from List Databases)
+	- method: string = "boolean" (optional; search mode)
+- Outputs: Array<SearchResultItem>
+- Scale: Can return hundreds to thousands of items depending on scope.
+- Constraints: Dependent on AustLII availability and response times; latency increases with scope and result set size.
+- Use when: Retrieving machine-usable search results for research, precedent checks, and statutory references.
 
-### search_austlii
-- Purpose: Search Australian legal databases for cases, legislation, and related documents; returns structured results for analysis.
-- Inputs: query: string (supports AND/OR/NOT), databases: string[] (codes from list_databases)
-- Outputs: Array of { title: string, url: string, metadata?: string }
-- Scale: Can return hundreds to thousands of items
-- Limitations: Dependent on AustLII availability; large queries take longer
-- Use when: Case law research, precedent checks, statutory references
-
-Example: query="unconscionable conduct", databases=["au/cases/cth/HCA","au/cases/cth/FCA"]
-
-### build_search_url
-- Purpose: Generate a direct, shareable URL to the AustLII results for the same query and databases.
-- Inputs: query: string, databases: string[]
+### Build Search URL
+- Purpose: Produce a direct, shareable HTTPS link to the equivalent AustLII results for manual browsing or bookmarking.
+- Inputs:
+	- query: string
+	- databases: string[]
+	- method: "boolean" | "auto" | "title" (optional; default "boolean")
 - Outputs: string (HTTPS URL)
-- Notes: No network call performed; link suitable for bookmarking/sharing/manual browsing
+- Notes: No network call is made; output mirrors the same query/scope and search method used.
+- Use when: A user or system needs a navigable URL instead of parsed results.
 
-Example: query="duty of care", databases=["au/cases/nsw/NSWSC"] → "https://www.austlii.edu.au/cgi-bin/sinosrch.cgi?..."
+### Search with Progress
+- Purpose: Perform the same search as Search AustLII while emitting progress via MCP context for long-running queries.
+- Inputs:
+	- query: string
+	- databases: string[]
+	- ctx: MCP context (for progress messages)
+	- method: string = "boolean" (optional)
+- Outputs: Array<SearchResultItem>
+- Constraints: Best suited for large scopes or high-latency scenarios where UI feedback is desirable.
+- Use when: The host or user benefits from progress indicators during execution.
 
-### search_with_progress
-- Purpose: Same search as search_austlii but emits progress updates for long-running queries.
-- Inputs: query: string, databases: string[]
-- Outputs: Array of { title: string, url: string, metadata?: string }
-- Limitations: Dependent on AustLII availability; duration scales with scope
-- Use when: Many databases, large result sets, or UI needs progress feedback
+## Selection Guidance (Agent-Oriented)
+- Need database options or codes? Use List Databases (or the resource `olexi://databases`).
+- Need structured, programmatic results? Use Search AustLII.
+- Need a shareable link for the same query/scope? Use Build Search URL.
+- Expect a long-running search and want UI feedback? Use Search with Progress.
 
-Example: query="misleading or deceptive conduct", databases=["au/cases/vic/VSC","au/cases/nsw/NSWCA"]
+## Operational Considerations
+- Performance: Result size scales with the number of databases and query breadth. Consider narrowing scope for faster turnaround.
+- Reliability: The tools depend on external AustLII availability. Transient slowdowns are possible during peak times.
+- Progress Semantics: Search with Progress reports a monotonic fraction [0,1] with brief status messages; final output matches Search AustLII.
+- Stability: Inputs/outputs are stable contracts abstracted from implementation details to minimize breaking changes.
+
+## Interface Quality Metrics
+To enable robust AI routing and integration, the interface descriptions prioritize:
+1. Decision clarity (when to use which tool or resource).
+2. Explicit parameter contracts (names, types, optionality, defaults).
+3. Output structure predictability (schemas that are easy to parse and display).
+4. Comparative context (distinguishing structured results vs shareable link vs progress-enabled search).
+5. Practical constraints (performance, dependency on upstream availability).
+
+## Examples (Non-executing)
+- Query across high courts: query = "unconscionable conduct", databases = ["au/cases/cth/HCA", "au/cases/cth/FCA"].
+- Shareable link: Build Search URL with query = "duty of care", databases = ["au/cases/nsw/NSWSC"].
+- Large-scope with feedback: Search with Progress for query = "misleading or deceptive conduct", databases = ["au/cases/vic/VSC", "au/cases/nsw/NSWCA"].
+
+## Privacy and Security Notes
+- The server exposes only functional tools and a database resource; no user data is persisted by these interfaces.
+- Hosts should manage API keys and credentials separately (outside tool inputs) where applicable.
+
+## Change Management
+This specification reflects the current implementation in `mcp_server.py`. Future changes should update this document only when input/output contracts or selection semantics change.
