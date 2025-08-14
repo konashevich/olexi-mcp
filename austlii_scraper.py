@@ -1,6 +1,7 @@
 # austlii_scraper.py (Final Production Version)
 
 import time
+import random
 import os
 import requests
 from bs4 import BeautifulSoup
@@ -59,12 +60,15 @@ def search_austlii(query: str, databases: List[str], method: str = "boolean") ->
     last_err: Optional[Exception] = None
     response: Optional[requests.Response] = None
     retries = int(os.getenv("AUSTLII_RETRIES", "3"))
-    timeout = float(os.getenv("AUSTLII_TIMEOUT", "20"))
+    # Allow separate connect/read timeouts; fall back to a single AUSTLII_TIMEOUT if provided
+    connect_timeout = float(os.getenv("AUSTLII_CONNECT_TIMEOUT", os.getenv("AUSTLII_TIMEOUT", "20")))
+    read_timeout = float(os.getenv("AUSTLII_READ_TIMEOUT", os.getenv("AUSTLII_TIMEOUT", "20")))
     backoff = float(os.getenv("AUSTLII_BACKOFF", "1.5"))
+    jitter = float(os.getenv("AUSTLII_JITTER", "0.3"))  # proportion, e.g., 0.3 => ±30%
     for attempt in range(max(1, retries)):
         try:
-            # Slightly longer timeout to handle AustLII slowness
-            response = requests.get(BASE_URL, params=params, headers=headers, timeout=timeout)
+            # Separate connect/read timeouts to better handle connect stalls
+            response = requests.get(BASE_URL, params=params, headers=headers, timeout=(connect_timeout, read_timeout))
             print(f"AustLII response status code: {response.status_code}")
             response.raise_for_status()
             break
@@ -72,7 +76,9 @@ def search_austlii(query: str, databases: List[str], method: str = "boolean") ->
             last_err = e
             print(f"Error fetching data from AustLII (attempt {attempt+1}): {e}")
             if attempt < max(1, retries) - 1:
-                time.sleep(backoff)  # brief backoff
+                # brief backoff with jitter to avoid thundering herd
+                factor = 1.0 + random.uniform(-jitter, jitter) if jitter > 0 else 1.0
+                time.sleep(max(0.1, backoff * factor))
             else:
                 raise AustliiUnavailableError(str(e))
 

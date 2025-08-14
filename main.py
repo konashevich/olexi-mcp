@@ -6,7 +6,10 @@ from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
-from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
+try:
+    from starlette.middleware.proxy_headers import ProxyHeadersMiddleware  # type: ignore
+except Exception:  # starlette version may not include it
+    ProxyHeadersMiddleware = None  # type: ignore
 from austlii_scraper import check_austlii_health
 from host_agent import HOST_AI  # host-side agent (uses its own AI key)
 from database_map import DATABASE_TOOLS_LIST
@@ -46,7 +49,12 @@ app = FastAPI(
 )
 
 # Respect X-Forwarded-* headers from Cloud Run / proxies to avoid incorrect http→https redirects
-app.add_middleware(ProxyHeadersMiddleware)
+if ProxyHeadersMiddleware is not None:  # type: ignore
+    try:
+        app.add_middleware(ProxyHeadersMiddleware)  # type: ignore
+    except Exception:
+        # Non-fatal: continue without proxy header handling in dev
+        pass
 # Load API keys for extension and manual clients
 API_KEY_NAME = "X-API-Key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)

@@ -33,3 +33,21 @@
 {"ts": "2025-08-13T06:07:16Z", "ok": true, "status": 200, "error": "", "latency_ms": 112, "source": "poll", "interval_s": 90}
 {"ts": "2025-08-13T06:08:46Z", "ok": true, "status": 200, "error": "", "latency_ms": 108, "source": "poll", "interval_s": 90}
 {"ts": "2025-08-13T06:10:16Z", "ok": true, "status": 200, "error": "", "latency_ms": 110, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:40:02Z", "ok": true, "status": 200, "error": "", "latency_ms": 122, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:40:33Z", "ok": true, "status": 200, "error": "", "latency_ms": 112, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:42:03Z", "ok": true, "status": 200, "error": "", "latency_ms": 120, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:43:33Z", "ok": true, "status": 200, "error": "", "latency_ms": 116, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:45:04Z", "ok": true, "status": 200, "error": "", "latency_ms": 138, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:46:37Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xffffa2c88980>, 'Connection to www.austlii.edu.au timed out. (connect timeout=3)'))", "latency_ms": 3020, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:48:10Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3022, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:48:15Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3023, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:49:48Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3016, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:51:21Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3021, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:54:24Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3020, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:55:57Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3020, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:57:30Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3020, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T02:59:03Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3022, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T03:00:36Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3022, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T03:02:09Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3024, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T03:03:42Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3019, "source": "poll", "interval_s": 90}
+{"ts": "2025-08-14T03:05:15Z", "ok": false, "status": 0, "error": "HTTPSConnectionPool(host='www.austlii.edu.au', port=443): Read timed out. (read timeout=3)", "latency_ms": 3025, "source": "poll", "interval_s": 90}

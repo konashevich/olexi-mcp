@@ -63,39 +63,24 @@ Research framing: disciplined legal search, not fuzzy browsing
 
 ## System architecture (high level)
 
-Extension (UI) → Host-led SSE session → MCP tool calls → AustLII → Preview → Host summary
+MCP host → MCP tool calls → AustLII → Preview in host
 
-- Browser extension: captures a natural-language prompt and streams a research session via Server-Sent Events (SSE).
-- Host agent (server-side):
-  1) Plans the AustLII query + database set; 2) invokes MCP tools; 3) applies filters/fallbacks; 4) produces a concise summary plus follow-up questions.
 - MCP server (tool-only): search_austlii, search_with_progress, build_search_url.
   - Production (Cloud Run): MCP Streamable HTTP is served at the service root path "/" (no /mcp).
-  - Local (combined app): the MCP transport may be mounted under "/mcp" when running the legacy host+MCP server.
+  - Local: identical — serve MCP at the root path "/".
 - Scraper: performs the CGI request with required headers and parses div.card > li.multi.
 
 ## Endpoints
-- GET `/status` — JSON status (AI availability, MCP presence, and AustLII health snapshot)
-- SSE research session (host-led):
-  - POST `/session/research` — streams planning → MCP search_with_progress → preview → summary
 - MCP server (Streamable HTTP):
   - Production: served at the root path `/` (POST handshake at `/`).
-  - Local legacy mode: mounted at `/mcp`.
+  - Local: served at the root path `/`.
   - Connect a compatible host to use the tools (list_databases, search_austlii, build_search_url)
-- AustLII health:
-  - GET `/austlii/health` — health + uptime summary (use `?live=true` to probe now)
-  - POST `/austlii/health/probe` — immediate probe
-  - GET `/austlii/uptime` — uptime windows and counters only
-
-## Authentication and rate limits
-- Development (local): API key in header `X-API-Key`, validated against EXTENSION_API_KEYS or client_api_keys.txt. Optional extension ID and origin checks.
-- Production: extension keys only; strict origin/ID/UA checks; per-key daily caps and anti-sharing heuristics.
 
 Environment variables (selected)
-- EXTENSION_API_KEYS, EXTENSION_IDS, EXTENSION_ALLOWED_ORIGINS, EXTENSION_UA_PREFIX
-- RATE_LIMIT_PER_DAY (default 50), MAX_DISTINCT_IPS (default 10)
 - AUSTLII_POLL_INTERVAL, AUSTLII_HEALTH_TIMEOUT
 - AUSTLII_TIMEOUT, AUSTLII_RETRIES, AUSTLII_BACKOFF
-- PREVIEW_STOPLIST (optional, comma-separated terms)
+- AUSTLII_CONNECT_TIMEOUT, AUSTLII_READ_TIMEOUT (optional, override AUSTLII_TIMEOUT for connect/read respectively)
+- AUSTLII_JITTER (optional jitter proportion for retry backoff, e.g., 0.3 => ±30%)
 
 ## Setup (local)
 
@@ -105,15 +90,10 @@ Prerequisites: Python 3.12+
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-echo 'GOOGLE_API_KEY=your_gemini_api_key_here' >> .env
-uvicorn main:app --reload --port 3000 --env-file .env
+uvicorn mcp_http:app --host 127.0.0.1 --port 3000 --reload
 ```
 
-Quick checks
-```bash
-curl -s http://127.0.0.1:3000/status | jq
-curl -s http://127.0.0.1:3000/austlii/health | jq
-```
+See `docs/how_to_start_locally.md` for local start and handshake test.
 
 ## MCP usage (tool-only)
 - Production (recommended): point your MCP host at the Cloud Run service base URL; the MCP transport is at `/` (no path).
