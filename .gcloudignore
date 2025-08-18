@@ -1,0 +1,21 @@
+# This file controls what files are uploaded to Google Cloud Build.
+# It overrides the default behavior of deriving ignore rules from .gitignore.
+
+# Exclude typical local artifacts
+.venv/
+venv/
+env/
+__pycache__/
+.pytest_cache/
+.vscode/
+.idea/
+*.log
+old/
+
+# Do NOT ignore the extension package (it is needed for the build)
+!olexi-extension/**
+
+# Allow root requirements and Dockerfiles
+!requirements.txt
+!Dockerfile
+!cloudbuild.olexi-extension-host.yaml
