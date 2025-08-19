@@ -1,8 +1,8 @@
-name: Deploy GitHub Pages
+name: Static HTML
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -11,49 +11,24 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Prepare site artifact
-        run: |
-          set -euo pipefail
-          rm -rf dist
-          mkdir -p dist
-          # root pages
-          cp -v index.html terms.html privacy.html 404.html dist/ || true
-          # custom domain
-          cp -v CNAME dist/ || true
-          # icons
-          mkdir -p dist/icons
-          cp -v icons/icon32.png icons/icon128.png icons/icon512.png dist/icons/ || true
-          # docs used by the site
-          mkdir -p dist/docs/copilot/connector
-          cp -rv docs/copilot/connector/* dist/docs/copilot/connector/ || true
-          # include PRIVACY_MCP.md referenced from docs
-          cp -v PRIVACY_MCP.md dist/ || true
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './dist'
-
   deploy:
-    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
