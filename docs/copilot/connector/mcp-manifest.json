@@ -1,0 +1,117 @@
+{
+  "name": "Olexi MCP Connector (AustLII)",
+  "description": "Search AustLII and generate shareable result links for Australian legal research.",
+  "publisher": {
+    "name": "<Your Publisher Name>",
+    "website": "https://<your-website>",
+    "supportEmail": "support@example.com"
+  },
+  "auth": {
+    "type": "none"
+  },
+  "transport": {
+    "type": "streamable-http",
+    "endpoint": "https://<your-production-domain>/mcp"
+  },
+  "resources": [
+    {
+      "name": "olexi://databases",
+      "description": "List of AustLII databases",
+      "schema": { "type": "string" }
+    }
+  ],
+  "tools": [
+    {
+      "name": "list_databases",
+      "title": "List Databases",
+      "inputSchema": { "type": "object", "properties": {}, "additionalProperties": false },
+      "outputSchema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "code": {"type": "string"},
+            "name": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["code","name"],
+          "additionalProperties": true
+        }
+      }
+    },
+    {
+      "name": "search_austlii",
+      "title": "Search AustLII",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "databases": {"type": "array", "items": {"type": "string"}},
+          "method": {"type": "string", "enum": ["boolean","auto","title"], "default": "boolean"}
+        },
+        "required": ["query","databases"],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": {"type": "string"},
+            "url": {"type": "string", "format": "uri"},
+            "metadata": {"type": ["string","null"]}
+          },
+          "required": ["title","url"],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "name": "build_search_url",
+      "title": "Build Search URL",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "databases": {"type": "array", "items": {"type": "string"}},
+          "method": {"type": "string", "enum": ["boolean","auto","title"], "default": "boolean"}
+        },
+        "required": ["query","databases"],
+        "additionalProperties": false
+      },
+      "outputSchema": {"type": "string", "format": "uri"}
+    },
+    {
+      "name": "search_with_progress",
+      "title": "Search with Progress",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "databases": {"type": "array", "items": {"type": "string"}},
+          "method": {"type": "string", "enum": ["boolean","auto","title"], "default": "boolean"}
+        },
+        "required": ["query","databases"],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": {"type": "string"},
+            "url": {"type": "string", "format": "uri"},
+            "metadata": {"type": ["string","null"]}
+          },
+          "required": ["title","url"],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "icons": {
+    "32": "/static/favicon-32x32.png",
+    "128": "/static/android-chrome-192x192.png"
+  },
+  "privacyPolicyUrl": "/privacy"
+}

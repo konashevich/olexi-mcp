@@ -485,6 +485,11 @@ async def privacy_page():
         return FileResponse(path, media_type="text/html")
     return {"title": "Privacy Policy", "detail": "See docs/PRIVACY_MCP.md"}
 
+# Lightweight healthz for load balancers and readiness checks
+@app.get("/healthz", include_in_schema=False, tags=["Health Check"])
+async def healthz():
+    return {"status": "ok"}
+
 @app.get("/status", tags=["Health Check"])
 async def get_status():
     """JSON status endpoint for programmatic access."""
