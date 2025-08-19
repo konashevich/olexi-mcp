@@ -10,7 +10,7 @@ Folders/files to include in your submission:
 - PRIVACY_MCP.md (and static/privacy-mcp.html)
 
 Reviewer info to provide
-- Public MCP URL: https://api.olexi.legal/mcp
+- Public MCP URL: https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/
 - Support email and publisher info
 - Test steps: See TESTING.md
 - Data rights position: See RIGHTS.md

@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Olexi MCP for AustLII</title>
-    <meta name="description" content="Model Context Protocol connector for Australian legal research on AustLII." />
+  <title>Olexi MCP for AustLII</title>
+  <meta name="description" content="Model Context Protocol (MCP) server for Australian legal research on AustLII—usable from any MCP-capable host." />
     <meta property="og:title" content="Olexi MCP for AustLII" />
-    <meta property="og:description" content="Search AustLII and generate shareable result links from Copilot Studio." />
+  <meta property="og:description" content="Search AustLII and generate shareable result links from any MCP-capable host (ChatGPT Connectors, Claude, VS Code + Copilot)." />
     <meta property="og:image" content="/icons/icon512.png" />
     <link rel="icon" href="/icons/icon32.png" sizes="32x32" />
     <link rel="icon" href="/icons/icon128.png" sizes="128x128" />
@@ -36,25 +36,26 @@
     <header>
       <img src="/icons/icon128.png" alt="Olexi icon" />
       <h1>Olexi MCP for AustLII</h1>
-      <p class="lead">A Model Context Protocol (MCP) connector that lets Microsoft Copilot Studio agents search AustLII and share result links for Australian legal research. Designed for discovery: fast titles, URLs, and light metadata—open the primary sources on AustLII for full text.</p>
+      <p class="lead">A Model Context Protocol (MCP) server that lets your AI tools search AustLII and share result links for Australian legal research. Works with any MCP-capable host (e.g., ChatGPT Connectors, Claude, VS Code + GitHub Copilot). Designed for discovery: fast titles, URLs, and light metadata—open the primary sources on AustLII for full text.</p>
     </header>
     <main>
       <section class="card">
         <h3>Where to find it</h3>
         <p class="endpoint"><span class="mono">MCP endpoint:</span><br />
-          <code>https://api.olexi.legal/mcp</code>
+          <code>https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/</code>
         </p>
-  <p class="muted">Health: <code>https://api.olexi.legal/healthz</code></p>
+        <p class="muted">Transport: Streamable HTTP served at the service root (<code>/</code>).</p>
       </section>
 
       <section class="card">
-        <h3>How to use (Copilot Studio)</h3>
-        <ol>
-          <li>Add a connector using the MCP protocol.</li>
-          <li>Set the connector URL to <code>https://api.olexi.legal/mcp</code>.</li>
-          <li>No authentication required for certification; you can enable API key later.</li>
-          <li>Call tools like <code>list_databases</code> and <code>search_austlii</code>.</li>
-        </ol>
+        <h3>How to use (any MCP host)</h3>
+        <ul>
+          <li><strong>ChatGPT (Connectors):</strong> Add a connector via MCP, set the URL to the endpoint above, then call tools like <code>search_austlii</code>.</li>
+          <li><strong>Claude:</strong> Add an MCP server with the endpoint above and use the tools in chats.</li>
+          <li><strong>VS Code + GitHub Copilot:</strong> Configure your MCP servers to include this endpoint.</li>
+          <li><strong>Other MCP-capable apps:</strong> Point to the same endpoint; MCP is transport-compatible.</li>
+        </ul>
+        <p class="muted">For manual configuration examples and JSON snippets, see the README (link below). No authentication is required on the hosted endpoint; self-hosting with stricter policies is supported.</p>
       </section>
 
       <section class="card">
@@ -69,7 +70,7 @@
 
       <section class="card">
         <h3>Architecture</h3>
-        <p>FastAPI app with MCP Streamable HTTP at <code>/mcp</code>. The connector fetches search results from AustLII’s legacy CGI endpoint and returns lightweight metadata. Full text remains on AustLII.</p>
+        <p>FastAPI app exposing MCP Streamable HTTP at the <strong>service root</strong> (<code>/</code>) in production. The server queries AustLII’s legacy CGI endpoint and returns lightweight metadata (titles, URLs, basic info). Full text remains on AustLII.</p>
       </section>
 
       <section class="card">
@@ -79,6 +80,7 @@
           <li><a href="docs/copilot/connector/README.md">Connector README</a></li>
           <li><a href="docs/copilot/connector/TESTING.md">Testing steps</a></li>
           <li><a href="docs/copilot/connector/mcp-manifest.json">MCP manifest</a></li>
+          <li><a href="readme.md">Project README (usage and endpoints)</a></li>
         </ul>
       </section>
 
@@ -93,7 +95,7 @@
 
       <section class="card">
         <h3>Status</h3>
-        <p>Deployment target: <span class="ok">Production</span> on custom domain <code>mcp.olexi.legal</code>.</p>
+        <p>Website: hosted on <code>mcp.olexi.legal</code>. MCP server: hosted on <code>Google Cloud Run</code> at the endpoint above.</p>
       </section>
 
       <section class="card grid-1x2">

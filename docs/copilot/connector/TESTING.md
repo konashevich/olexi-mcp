@@ -3,17 +3,17 @@
 Purpose: Provide deterministic manual steps for Microsoft validation.
 
 Prerequisites
-- Public endpoint live at https://api.olexi.legal/
-- MCP path reachable at https://api.olexi.legal/mcp
+- Public endpoint live at https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/
+- MCP transport served at the service root (POST handshake at "/")
 - No auth required on MCP for certification testing
 
 Steps
 1) Health check
-   - GET https://api.olexi.legal/status → JSON includes `mcp: true` and `austlii.ok` (true/false)
-   - GET https://api.olexi.legal/mcp/health → {"status":"ok","name":"Olexi MCP Server", ...}
+   - If running the combined local app: GET http://127.0.0.1:3000/status → JSON includes `mcp: true` and `austlii.ok` (true/false)
+   - For production Cloud Run: MCP is at the root and may not expose `/status` or `/mcp/health`. Validate by connecting via an MCP-capable host to the base URL.
 
 2) List databases
-   - Create a Copilot Studio test agent and add the MCP connector pointing to https://api.olexi.legal/mcp
+   - Create a test agent and add the MCP connector pointing to the Cloud Run base URL above
    - In a test chat, invoke tool `list_databases`.
    - Expected: an array of objects with fields `code`, `name`, `description`; length > 10.
 

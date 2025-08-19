@@ -13,7 +13,7 @@ Artifacts
 - [ ] Support email and publisher details
 
 Technical
-- [x] MCP Streamable HTTP exposed at `/mcp`
+- [x] MCP Streamable HTTP exposed (root path `/` in production; `/mcp` in local combined app)
 - [x] Health endpoints present
 - [x] Tool contracts documented (inputs/outputs)
 - [ ] Optional API key headers if enabled for MCP

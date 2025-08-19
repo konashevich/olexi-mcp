@@ -1,14 +1,13 @@
 ## Olexi MCP Connector for AustLII (Independent Publisher)
 
 Overview
-- Purpose: Provide a lightweight MCP (Model Context Protocol) server that enables Copilot Studio agents to search AustLII and generate shareable result links for legal research.
+- Purpose: Provide a lightweight MCP (Model Context Protocol) server that enables MCP-capable hosts (including Copilot Studio) to search AustLII and generate shareable result links for legal research.
 - Scope: Discovery/search only. Returns titles, links, and limited metadata; users open the primary source on AustLII.
-- Transport: MCP Streamable HTTP mounted at `/mcp` within the existing FastAPI app.
+- Transport: MCP Streamable HTTP at the service root (`/`) in production; locally it may be mounted under `/mcp` when running the combined app.
 
 Public endpoint
-- Base URL: https://api.olexi.legal/
-- MCP endpoint: https://api.olexi.legal/mcp
-- Health: https://api.olexi.legal/mcp/health and https://api.olexi.legal/status
+- Hosted endpoint (Cloud Run): https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/
+- Health (local combined app): http://127.0.0.1:3000/status
 
 Authentication
 - Default for certification: No auth on the MCP endpoint. The server supports API keys for some non-MCP flows, but MCP path is open for certification to simplify validation.
@@ -21,7 +20,7 @@ Capabilities (tools)
 - search_with_progress(query, databases, method="boolean"): Same as search but provides progress updates via MCP progress callbacks.
 
 Configuration in Copilot Studio
-1) Choose to add an MCP connector and provide the MCP URL: `https://api.olexi.legal/mcp`
+1) Choose to add an MCP connector and provide the MCP URL: `https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/`
 2) No authentication required for the MCP path during certification.
 3) Provide the icon (32x32 and 128x128 PNG). Suggested: reuse `static/favicon-32x32.png` and create a 128x128 if needed.
 

@@ -13,8 +13,8 @@ Auth
 - None (for MCP endpoint) to simplify review.
 
 Endpoints
-- MCP Streamable HTTP at `https://api.olexi.legal/mcp`
-- Health at `https://api.olexi.legal/mcp/health` and `https://api.olexi.legal/status`
+- MCP Streamable HTTP at the service root: `https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/`
+- Health endpoints are provided in the local combined app; production Cloud Run is MCP-only at the root.
 
 Operations (tools)
 - list_databases

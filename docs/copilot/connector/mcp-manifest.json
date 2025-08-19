@@ -2,8 +2,8 @@
   "name": "Olexi MCP Connector (AustLII)",
   "description": "Search AustLII and generate shareable result links for Australian legal research.",
   "publisher": {
-    "name": "<Your Publisher Name>",
-    "website": "https://<your-website>",
+  "name": "Olexi",
+  "website": "https://olexi.legal",
   "supportEmail": "ai@olexi.legal"
   },
   "auth": {
@@ -11,7 +11,7 @@
   },
   "transport": {
     "type": "streamable-http",
-  "endpoint": "https://api.olexi.legal/mcp"
+  "endpoint": "https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/"
   },
   "resources": [
     {
@@ -110,8 +110,8 @@
     }
   ],
   "icons": {
-    "32": "/icons/icon32.png",
-    "128": "/icons/icon128.png"
+    "32": "https://mcp.olexi.legal/icons/icon32.png",
+    "128": "https://mcp.olexi.legal/icons/icon128.png"
   },
-  "privacyPolicyUrl": "/privacy"
+  "privacyPolicyUrl": "https://mcp.olexi.legal/privacy.html"
 }
