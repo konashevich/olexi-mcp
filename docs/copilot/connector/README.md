@@ -6,9 +6,9 @@ Overview
 - Transport: MCP Streamable HTTP mounted at `/mcp` within the existing FastAPI app.
 
 Public endpoint
-- Base URL: https://<your-production-domain>/
-- MCP endpoint: https://<your-production-domain>/mcp
-- Health: https://<your-production-domain>/mcp/health and https://<your-production-domain>/status
+- Base URL: https://api.olexi.legal/
+- MCP endpoint: https://api.olexi.legal/mcp
+- Health: https://api.olexi.legal/mcp/health and https://api.olexi.legal/status
 
 Authentication
 - Default for certification: No auth on the MCP endpoint. The server supports API keys for some non-MCP flows, but MCP path is open for certification to simplify validation.
@@ -21,7 +21,7 @@ Capabilities (tools)
 - search_with_progress(query, databases, method="boolean"): Same as search but provides progress updates via MCP progress callbacks.
 
 Configuration in Copilot Studio
-1) Choose to add an MCP connector and provide the MCP URL: `https://<your-production-domain>/mcp`
+1) Choose to add an MCP connector and provide the MCP URL: `https://api.olexi.legal/mcp`
 2) No authentication required for the MCP path during certification.
 3) Provide the icon (32x32 and 128x128 PNG). Suggested: reuse `static/favicon-32x32.png` and create a 128x128 if needed.
 

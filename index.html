@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Olexi MCP for AustLII</title>
+    <meta name="description" content="Model Context Protocol connector for Australian legal research on AustLII." />
+    <meta property="og:title" content="Olexi MCP for AustLII" />
+    <meta property="og:description" content="Search AustLII and generate shareable result links from Copilot Studio." />
+    <meta property="og:image" content="/icons/icon512.png" />
+    <link rel="icon" href="/icons/icon32.png" sizes="32x32" />
+    <link rel="icon" href="/icons/icon128.png" sizes="128x128" />
+    <link rel="apple-touch-icon" href="/icons/icon128.png" />
+    <style>
+      :root { --bg:#0b0d10; --fg:#eef2f7; --muted:#9fb0c3; --card:#12161b; --accent:#5ea3ff; --ok:#3fd27a; }
+      *{box-sizing:border-box} body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Ubuntu, Cantarell, 'Helvetica Neue', Arial, Noto Sans, sans-serif; color:var(--fg); background: radial-gradient(1200px 700px at 20% -10%, #1b2430 0%, transparent 60%), var(--bg); }
+      header { padding: 56px 24px 24px; text-align:center; }
+      header img { width:72px; height:72px; border-radius:16px; box-shadow:0 8px 30px rgba(0,0,0,.4) }
+      h1 { font-weight: 700; letter-spacing:.2px; margin:16px 0 8px; }
+      p.lead { margin:0 auto; max-width: 800px; color:var(--muted); line-height:1.6; }
+      main { padding: 24px; max-width: 1080px; margin: 0 auto; display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+      .card { background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:16px 18px; box-shadow: 0 6px 28px rgba(0,0,0,.25); }
+      .card h3 { margin:4px 0 8px; font-size: 18px; }
+      code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; background: rgba(255,255,255,.06); padding:.2em .4em; border-radius:6px; }
+      .endpoint { font-size: 14px; word-break: break-all; }
+      ul { margin: 8px 0 0 18px; color: var(--fg); }
+      footer { padding: 24px; text-align:center; color:var(--muted); font-size: 14px; }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .ok { color: var(--ok); font-weight:600 }
+      .grid-1x2 { grid-column: 1 / -1; display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+      .muted { color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="/icons/icon128.png" alt="Olexi icon" />
+      <h1>Olexi MCP for AustLII</h1>
+      <p class="lead">A Model Context Protocol (MCP) connector that lets Microsoft Copilot Studio agents search AustLII and share result links for Australian legal research. Designed for discovery: fast titles, URLs, and light metadata—open the primary sources on AustLII for full text.</p>
+    </header>
+    <main>
+      <section class="card">
+        <h3>Where to find it</h3>
+        <p class="endpoint"><span class="mono">MCP endpoint:</span><br />
+          <code>https://api.olexi.legal/mcp</code>
+        </p>
+  <p class="muted">Health: <code>https://api.olexi.legal/healthz</code></p>
+      </section>
+
+      <section class="card">
+        <h3>How to use (Copilot Studio)</h3>
+        <ol>
+          <li>Add a connector using the MCP protocol.</li>
+          <li>Set the connector URL to <code>https://api.olexi.legal/mcp</code>.</li>
+          <li>No authentication required for certification; you can enable API key later.</li>
+          <li>Call tools like <code>list_databases</code> and <code>search_austlii</code>.</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h3>Tools exposed</h3>
+        <ul>
+          <li><strong>list_databases()</strong> — available legal databases</li>
+          <li><strong>search_austlii(query, databases, method)</strong> — titles, URLs, metadata</li>
+          <li><strong>build_search_url(query, databases, method)</strong> — shareable link</li>
+          <li><strong>search_with_progress(...)</strong> — like search + progress events</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h3>Architecture</h3>
+        <p>FastAPI app with MCP Streamable HTTP at <code>/mcp</code>. The connector fetches search results from AustLII’s legacy CGI endpoint and returns lightweight metadata. Full text remains on AustLII.</p>
+      </section>
+
+      <section class="card">
+        <h3>Docs & source</h3>
+        <ul>
+          <li><a href="https://github.com/konashevich/olexi-mcp" target="_blank" rel="noopener">GitHub repository</a></li>
+          <li><a href="docs/copilot/connector/README.md">Connector README</a></li>
+          <li><a href="docs/copilot/connector/TESTING.md">Testing steps</a></li>
+          <li><a href="docs/copilot/connector/mcp-manifest.json">MCP manifest</a></li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h3>Legal & policies</h3>
+        <ul>
+          <li><a href="/terms.html">Terms of Use</a></li>
+          <li><a href="/privacy.html">Privacy Policy</a></li>
+        </ul>
+        <p class="muted">Attribution: Results via AustLII (austlii.edu.au). Primary law is public domain; we return links and light metadata only.</p>
+      </section>
+
+      <section class="card">
+        <h3>Status</h3>
+        <p>Deployment target: <span class="ok">Production</span> on custom domain <code>mcp.olexi.legal</code>.</p>
+      </section>
+
+      <section class="card grid-1x2">
+        <div>
+          <h3>Quick start prompt</h3>
+          <p class="muted">Try: <code>Search HCA and FCA for "privacy act AND metadata retention"</code></p>
+        </div>
+        <div>
+          <h3>Support</h3>
+          <p>Questions? See <a href="docs/copilot/connector/SUPPORT.md">Support</a>.</p>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <p>© <span id="y"></span> Olexi. All rights reserved.</p>
+    </footer>
+    <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+  </body>
+  </html>

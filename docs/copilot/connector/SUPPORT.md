@@ -1,6 +1,6 @@
 # SUPPORT
 
-- Contact: <support@example.com>
+- Contact: <ai@olexi.legal>
 - Response window: 3 business days
 - Coverage: Best-effort support for connector availability and documentation issues.
 - Issue types: Availability, incorrect result parsing, MCP handshake issues, documentation fixes.

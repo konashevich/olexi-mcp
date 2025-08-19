@@ -4,14 +4,14 @@
   "publisher": {
     "name": "<Your Publisher Name>",
     "website": "https://<your-website>",
-    "supportEmail": "support@example.com"
+  "supportEmail": "ai@olexi.legal"
   },
   "auth": {
     "type": "none"
   },
   "transport": {
     "type": "streamable-http",
-    "endpoint": "https://<your-production-domain>/mcp"
+  "endpoint": "https://api.olexi.legal/mcp"
   },
   "resources": [
     {
@@ -110,8 +110,8 @@
     }
   ],
   "icons": {
-    "32": "/static/favicon-32x32.png",
-    "128": "/static/android-chrome-192x192.png"
+    "32": "/icons/icon32.png",
+    "128": "/icons/icon128.png"
   },
   "privacyPolicyUrl": "/privacy"
 }

@@ -10,7 +10,7 @@ Folders/files to include in your submission:
 - PRIVACY_MCP.md (and static/privacy-mcp.html)
 
 Reviewer info to provide
-- Public MCP URL: https://<your-production-domain>/mcp
+- Public MCP URL: https://api.olexi.legal/mcp
 - Support email and publisher info
 - Test steps: See TESTING.md
 - Data rights position: See RIGHTS.md

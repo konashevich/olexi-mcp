@@ -13,8 +13,8 @@ Auth
 - None (for MCP endpoint) to simplify review.
 
 Endpoints
-- MCP Streamable HTTP at `https://<your-production-domain>/mcp`
-- Health at `/mcp/health` and `/status`
+- MCP Streamable HTTP at `https://api.olexi.legal/mcp`
+- Health at `https://api.olexi.legal/mcp/health` and `https://api.olexi.legal/status`
 
 Operations (tools)
 - list_databases
@@ -28,7 +28,7 @@ Limitations
 Publisher
 - Name: <Your Publisher Name>
 - Website: https://<your-website>
-- Support: support@example.com
+- Support: ai@olexi.legal
 
 Notes
 - Attribution: "Results via AustLII (austlii.edu.au)".

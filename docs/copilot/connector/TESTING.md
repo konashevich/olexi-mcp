@@ -3,17 +3,17 @@
 Purpose: Provide deterministic manual steps for Microsoft validation.
 
 Prerequisites
-- Public endpoint live at https://<your-production-domain>/
-- MCP path reachable at https://<your-production-domain>/mcp
+- Public endpoint live at https://api.olexi.legal/
+- MCP path reachable at https://api.olexi.legal/mcp
 - No auth required on MCP for certification testing
 
 Steps
 1) Health check
-   - GET https://<domain>/status → JSON includes `mcp: true` and `austlii.ok` (true/false)
-   - GET https://<domain>/mcp/health → {"status":"ok","name":"Olexi MCP Server", ...}
+   - GET https://api.olexi.legal/status → JSON includes `mcp: true` and `austlii.ok` (true/false)
+   - GET https://api.olexi.legal/mcp/health → {"status":"ok","name":"Olexi MCP Server", ...}
 
 2) List databases
-   - Create a Copilot Studio test agent and add the MCP connector pointing to https://<domain>/mcp
+   - Create a Copilot Studio test agent and add the MCP connector pointing to https://api.olexi.legal/mcp
    - In a test chat, invoke tool `list_databases`.
    - Expected: an array of objects with fields `code`, `name`, `description`; length > 10.
 
