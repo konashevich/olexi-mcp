@@ -1,16 +1,21 @@
-## Requirements checklist
-- Confirm Independent Publisher certification applies to MCP “connectors” and is feasible.
-- Clarify whether Step 2 (proposal) is required if the connector is already built.
-- Audit compliance with “Prepare connector files for certification”; list gaps.
-- Produce an actionable plan with owner splits (you vs me), including any manual steps you must do.
+## Requirements checklist (status)
+- [x] Confirm Independent Publisher certification applies to MCP “connectors” and is feasible.
+- [x] Clarify whether Step 2 (proposal) is required if the connector is already built (optional, recommended).
+- [x] Audit compliance with “Prepare connector files for certification”; list gaps.
+- [x] Produce an actionable plan with owner splits (you vs me), including any manual steps you must do.
+- [x] Public website live and accurate, vendor‑neutral, endpoint correct (Cloud Run base URL).
+- [x] Connector manifest prepared with correct endpoint, publisher, icons, privacy.
+- [x] Docs: README, TESTING, SUPPORT, SECURITY, CHANGELOG, RIGHTS present.
+- [ ] Optional proposal: draft and submit (recommended to mitigate data‑rights risk).
+- [ ] Submission PR: assemble package and open PR in Microsoft repo.
 
 ## Feasibility: can this MCP be certified as an Independent Publisher connector?
 - Bottom line: Feasible with caveats.
   - Microsoft Copilot Studio supports MCP servers (“connectors”) and provides a certification path via the Independent Publisher process alongside Power Platform connectors. Your attached docs (“Prepare Copilot Studio and Power Platform connector files for certification”, “Independent publisher certification process”) indicate MCP connectors are now in scope for certification in Copilot Studio.
   - Key dependencies to clear:
     - Data rights: The server scrapes AustLII. We’ll need terms-of-use compliance and (ideally) a documented permission/allowance for redistribution/use via a public connector. This is the biggest risk.
-    - Public hosting: A stable, TLS endpoint with uptime expectations. Your repo includes Cloud Run build files, so this seems solvable.
-    - Required certification artifacts: We’ll need a Copilot connector manifest and supporting docs/tests; these are mostly missing and must be created.
+    - Public hosting: Stable TLS endpoint — Cloud Run endpoint is live and documented.
+    - Required certification artifacts: Manifest and docs are now prepared in `docs/copilot/connector/`.
 - Confidence: High if data rights are cleared. Otherwise Medium (risk of rejection on IP/terms grounds).
 
 ## Step 2 (proposal) clarification
@@ -91,6 +96,31 @@ Phase 5 — Submission (You; I prep content)
   - If the path uses a GitHub PR to Microsoft’s connectors repo, I’ll prepare the folder structure and PR content; you open the PR and sign any CLA as needed.
 
 Phase 6 — Validation support and fixes (Me primary, You for approvals)
+
+---
+
+## Current status snapshot
+- Website: live at https://mcp.olexi.legal with accurate, host‑agnostic instructions. Done
+- Public MCP endpoint: https://olexi-mcp-root-au-691931843514.australia-southeast1.run.app/ (MCP at root). Done
+- Manifest: updated with endpoint, publisher, icons, privacy URL. Done
+- Connector docs: README, TESTING, SUPPORT, SECURITY, CHANGELOG, RIGHTS present and aligned. Done
+- Auth policy: No auth (documented in manifest/docs). Done
+- Data rights note: Attribution present; RIGHTS.md included. In progress (permission letter optional)
+- CORS/rate limit: Documented policy; implementation not required for MCP server to function. In progress (optional)
+
+## Immediate next step
+1) Optional but recommended: submit a short proposal issue to Microsoft (I can draft the text; you submit if the process requires your account).
+2) Prepare and open the Independent Publisher submission PR with our manifest, docs, and icons. I will assemble the package in-repo and draft the PR body; you may need to complete org CLA or final submit depending on Microsoft’s process.
+
+## Your manual items (minimal)
+- Provide/confirm AustLII ToS link and any permission letter (if available) to include in submission. If none, confirm we proceed with attribution-only justification.
+- Confirm publisher display name and website (currently “Olexi”, https://olexi.legal) and support email (ai@olexi.legal).
+- If Microsoft requires PR from your GitHub account: approve the prepared PR draft and complete any CLA checks.
+
+## What I will do next (no action needed from you)
+- Create a `docs/copilot/connector/SUBMISSION_PACKAGE.md` with links to all artifacts and a PR-ready submission body.
+- Verify all docs link to the correct endpoint and privacy/terms URLs (done; will recheck in the package).
+- Start the submission PR draft text and instructions for the target Microsoft repo.
 - Triage MS feedback quickly.
 - Implement requested fixes and update artifacts.
 - Resubmit as needed.
