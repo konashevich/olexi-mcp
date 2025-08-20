@@ -33,7 +33,7 @@ This document bundles all artifacts and a PR-ready body for Microsoft Copilot St
 ## Data source and rights
 - Primary source: AustLII (austlii.edu.au). We return links and light metadata; full text remains on AustLII.
 - Attribution: Included in site and docs.
-- Terms/permissions: Please see `RIGHTS.md`. If a permission letter is available, attach it to the PR or link it.
+- Terms/permissions: Attribution-only justification based on AustLII Web Developers materials. See `RIGHTS.md` and PDFs under `docs/austlii/`. If a permission letter is obtained later, attach it.
 
 ## PR-ready description (template)
 

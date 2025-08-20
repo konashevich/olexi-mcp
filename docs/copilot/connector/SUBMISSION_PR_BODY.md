@@ -36,7 +36,7 @@ Olexi MCP is an MCP server that lets MCP-capable hosts (including Copilot Studio
 
 ## Data rights
 - We cite and link to AustLII and return light metadata only.
-- Attribution included; see RIGHTS.md. We can provide any additional assurance if needed.
+- Attribution-only justification referencing AustLII Web Developers public materials; see `RIGHTS.md` and PDFs in `docs/austlii/`. We can provide additional assurance if needed.
 
 ## Notes
 - Endpoint is hosted on Google Cloud Run in australia-southeast1.
