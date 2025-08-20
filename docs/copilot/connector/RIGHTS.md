@@ -15,6 +15,9 @@ Notes
 - Some linked pages may contain headnotes or editorial content with separate rights; the connector does not republish such content.
 - If formal permission is obtained, attach the letter/email in this folder.
 
+Special note
+- AustLII does not expose a modern JSON/REST API. Its SINO search is a legacy CGI that returns HTML pages only (no structured responses). The connector performs respectful HTML parsing solely to extract titles and links for citation/discovery.
+
 References (included in this repo under `docs/austlii/`)
 - "AustLII - Web Developers_ Linking Policy.pdf"
 - "AustLII - Web Developers_ Search Form Examples.pdf"
