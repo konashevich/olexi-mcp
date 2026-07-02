@@ -1,0 +1,3 @@
+[submodule "olexi-extension"]
+	path = olexi-extension
+	url = https://github.com/konashevich/olexi-extension.git
