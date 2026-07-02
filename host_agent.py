@@ -60,7 +60,7 @@ class HostAI:
             f"{tools_json}\n"
         )
         kwargs: Dict[str, Any] = {
-            "model": os.getenv("HOST_MODEL", "gemini-2.5-flash"),
+            "model": os.getenv("HOST_MODEL", "gemini-flash-latest"),
             "contents": f"{sys_prompt}\n\nUser Request: {user_prompt}",
         }
         if types is not None:
@@ -103,7 +103,7 @@ class HostAI:
             f"{sys_prompt}\n\nUser question: {user_prompt}\n\n"
             f"Results JSON:\n{tool_str}"
         )
-        resp = self.client.models.generate_content(model=os.getenv("HOST_MODEL", "gemini-2.5-flash"), contents=prompt)
+        resp = self.client.models.generate_content(model=os.getenv("HOST_MODEL", "gemini-flash-latest"), contents=prompt)
         return resp.text or ""
 
 
