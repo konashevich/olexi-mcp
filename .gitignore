@@ -62,6 +62,7 @@ htmlcov/
 # IDE and editor folders
 .vscode/
 .idea/
+.specstory/
 
 # Log files
 *.log
