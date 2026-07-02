@@ -8,9 +8,16 @@ Run with uvicorn, e.g.:
   uvicorn mcp_http:app --host 0.0.0.0 --port ${PORT:-8080}
 """
 
+import logging
+import os
+
 from mcp_server import mcp
 from starlette.responses import FileResponse, JSONResponse
-import os
+
+from mcp_analytics import wrap_with_analytics
+
+# JSON logs for Cloud Logging queries (see mcp_analytics.py).
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 # Ensure the HTTP transport expects the handshake at "/" (trailing slash supported).
 try:
@@ -19,17 +26,20 @@ except Exception:
     pass
 
 # Build the ASGI sub-application that implements the MCP Streamable HTTP transport.
-app = mcp.streamable_http_app()
+_base_app = mcp.streamable_http_app()
+
 
 # Lightweight /privacy route when this app is deployed standalone
 async def privacy(request):  # type: ignore[override]
-  path = "static/privacy-mcp.html"
-  if os.path.exists(path):
-    return FileResponse(path, media_type="text/html")
-  return JSONResponse({"title": "Privacy Policy", "detail": "See docs/PRIVACY_MCP.md"})
+    path = "static/privacy-mcp.html"
+    if os.path.exists(path):
+        return FileResponse(path, media_type="text/html")
+    return JSONResponse({"title": "Privacy Policy", "detail": "See docs/PRIVACY_MCP.md"})
+
 
 try:
-  app.add_route("/privacy", privacy, methods=["GET"])  # type: ignore[attr-defined]
+    _base_app.add_route("/privacy", privacy, methods=["GET"])  # type: ignore[attr-defined]
 except Exception:
-  # If add_route isn't available, ignore; privacy page is optional
-  pass
+    pass
+
+app = wrap_with_analytics(_base_app)

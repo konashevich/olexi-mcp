@@ -6,15 +6,21 @@
 # on Australia's primary legal database (AustLII) through intelligent conversational
 # interfaces and sophisticated web scraping of legacy CGI endpoints.
 
+import os
+import urllib.parse
 from typing import List, Dict, Optional
+
 from pydantic import BaseModel
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 from mcp.server.fastmcp import FastMCP, Context
 
-from database_map import DATABASE_TOOLS_LIST
 from austlii_scraper import search_austlii as scrape
-import urllib.parse
-from starlette.responses import JSONResponse
-from starlette.requests import Request
+from database_map import DATABASE_TOOLS_LIST
+
+
+def _http_flag(name: str, default: str = "true") -> bool:
+    return os.getenv(name, default).strip().lower() in ("1", "true", "yes", "on")
 
 # --- Pydantic models for structured output ---
 class SearchResultItem(BaseModel):
@@ -23,7 +29,13 @@ class SearchResultItem(BaseModel):
     metadata: Optional[str] = None
 
 # --- Create FastMCP server instance ---
-mcp = FastMCP("Olexi MCP Server")  # AI-powered legal research assistant for AustLII
+# stateless_http + json_response: avoid long-lived stateful SSE sessions where clients allow it.
+# Override via MCP_STATELESS_HTTP / MCP_JSON_RESPONSE (stdio transport ignores these).
+mcp = FastMCP(
+    "Olexi MCP Server",
+    stateless_http=_http_flag("MCP_STATELESS_HTTP", "true"),
+    json_response=_http_flag("MCP_JSON_RESPONSE", "true"),
+)
 
 # --- Resources ---
 @mcp.resource("olexi://databases")

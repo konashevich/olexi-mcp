@@ -46,4 +46,4 @@ jobs:
             --memory 512Mi \
             --min-instances 0 \
             --max-instances 3 \
-            --set-env-vars "AUSTLII_POLL_INTERVAL=120,AUSTLII_HEALTH_TIMEOUT=6,AUSTLII_TIMEOUT=8,AUSTLII_RETRIES=2,AUSTLII_BACKOFF=0.5"
+            --set-env-vars "MCP_STATELESS_HTTP=true,MCP_JSON_RESPONSE=true,MCP_ANALYTICS_ENABLED=true,AUSTLII_TIMEOUT=8,AUSTLII_RETRIES=2,AUSTLII_BACKOFF=0.5"
