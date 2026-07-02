@@ -22,3 +22,7 @@ old/
 *.swp
 *.swo
 .vscode/
+.specstory/
+
+# Submodule virtualenv (large; not needed in MCP image)
+olexi-extension/.venv/

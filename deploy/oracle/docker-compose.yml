@@ -1,0 +1,67 @@
+# Unified MCP + extension backend for Oracle Cloud (or any Linux VM).
+# Run from this directory: docker compose up -d --build
+
+services:
+  mcp:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      MCP_STATELESS_HTTP: "true"
+      MCP_JSON_RESPONSE: "true"
+      MCP_ANALYTICS_ENABLED: "true"
+      AUSTLII_TIMEOUT: "8"
+      AUSTLII_RETRIES: "2"
+      AUSTLII_BACKOFF: "0.5"
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  extension:
+    build:
+      context: ../../olexi-extension
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mcp:
+        condition: service_healthy
+    environment:
+      MCP_URL: http://mcp:3000/
+      HOST_GOOGLE_API_KEY: ${HOST_GOOGLE_API_KEY}
+      TOKEN_LIFETIME_HOURS: "24"
+      DAILY_REQUEST_LIMIT: "50"
+      HOURLY_REQUEST_LIMIT: "10"
+      GIT_COMMIT_SHA: ${GIT_COMMIT_SHA:-unknown}
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - mcp
+      - extension
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

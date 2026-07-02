@@ -27,15 +27,12 @@ COPY . .
 RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port (Cloud Run respects $PORT env)
-EXPOSE 8080
+# Expose MCP port (run.py reads PORT, default 3000)
+EXPOSE 3000
 
-# Health variables defaults; adjust in Cloud Run env
-ENV AUSTLII_POLL_INTERVAL=120 \
-    AUSTLII_HEALTH_TIMEOUT=6 \
-    AUSTLII_TIMEOUT=8 \
+# Scraper tuning for tool calls
+ENV AUSTLII_TIMEOUT=8 \
     AUSTLII_RETRIES=2 \
     AUSTLII_BACKOFF=0.5
 
-# Start MCP-only server at service root (Cloud Run injects $PORT, default 8080)
 CMD ["/app/.venv/bin/python", "run.py"]

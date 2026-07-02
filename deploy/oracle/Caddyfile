@@ -1,0 +1,22 @@
+{
+	email admin@olexi.legal
+}
+
+mcp-api.olexi.legal {
+	reverse_proxy mcp:3000 {
+		flush_interval -1
+		transport http {
+			read_timeout 600s
+			write_timeout 600s
+		}
+	}
+}
+
+ext.olexi.legal {
+	reverse_proxy extension:8080 {
+		transport http {
+			read_timeout 300s
+			write_timeout 300s
+		}
+	}
+}
