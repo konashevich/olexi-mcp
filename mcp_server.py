@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from mcp.server.fastmcp import FastMCP, Context
+from mcp.server.transport_security import TransportSecuritySettings
 
 from austlii_scraper import search_austlii as scrape
 from database_map import DATABASE_TOOLS_LIST
@@ -21,6 +22,27 @@ from database_map import DATABASE_TOOLS_LIST
 
 def _http_flag(name: str, default: str = "true") -> bool:
     return os.getenv(name, default).strip().lower() in ("1", "true", "yes", "on")
+
+
+def _csv_env(name: str, default: str) -> list[str]:
+    raw = os.getenv(name, default)
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
+def _transport_security() -> TransportSecuritySettings:
+    # MCP >=1.28 enables DNS rebinding protection by default for localhost only.
+    # Docker internal clients use Host: mcp:3000; public clients use mcp-api.olexi.legal.
+    return TransportSecuritySettings(
+        enable_dns_rebinding_protection=_http_flag("MCP_DNS_REBINDING", "true"),
+        allowed_hosts=_csv_env(
+            "MCP_ALLOWED_HOSTS",
+            "127.0.0.1:*,localhost:*,[::1]:*,mcp:*,mcp-api.olexi.legal,mcp-api.olexi.legal:*",
+        ),
+        allowed_origins=_csv_env(
+            "MCP_ALLOWED_ORIGINS",
+            "http://127.0.0.1:*,http://localhost:*,http://[::1]:*,https://mcp-api.olexi.legal,https://mcp-api.olexi.legal:*",
+        ),
+    )
 
 # --- Pydantic models for structured output ---
 class SearchResultItem(BaseModel):
@@ -35,6 +57,7 @@ mcp = FastMCP(
     "Olexi MCP Server",
     stateless_http=_http_flag("MCP_STATELESS_HTTP", "true"),
     json_response=_http_flag("MCP_JSON_RESPONSE", "true"),
+    transport_security=_transport_security(),
 )
 
 # --- Resources ---

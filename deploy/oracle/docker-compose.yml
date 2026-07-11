@@ -12,13 +12,14 @@ services:
       MCP_STATELESS_HTTP: "true"
       MCP_JSON_RESPONSE: "true"
       MCP_ANALYTICS_ENABLED: "true"
+      MCP_ALLOWED_HOSTS: "127.0.0.1:*,localhost:*,[::1]:*,mcp:*,mcp-api.olexi.legal,mcp-api.olexi.legal:*"
       AUSTLII_TIMEOUT: "8"
       AUSTLII_RETRIES: "2"
       AUSTLII_BACKOFF: "0.5"
     expose:
       - "3000"
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/"]
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
